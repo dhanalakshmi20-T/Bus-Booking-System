@@ -5,7 +5,6 @@ import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard
 import { AddBusComponent } from './admin/add-bus/add-bus.component';
 import { ViewBusComponent } from './admin/view-bus/view-bus.component';
 import { ManageBusesComponent } from './admin/manage-buses/manage-buses.component';
-import { EditBusComponent } from './admin/edit-bus/edit-bus.component';
 import { UserDashboardComponent } from './user/user-dashboard/user-dashboard.component';
 import { SearchBusComponent } from './user/search-bus/search-bus.component';
 import { SeatSelectionComponent } from './user/seat-selection/seat-selection.component';
@@ -19,8 +18,7 @@ const routes: Routes = [
     children: [
       {path: 'add', component: AddBusComponent},
       {path: 'view', component: ViewBusComponent},
-      {path: 'manage', component: ManageBusesComponent},
-      {path: 'edit', component: EditBusComponent}
+      {path: 'manage', component: ManageBusesComponent}
     ]
   },
   {path: 'user', component: UserDashboardComponent,

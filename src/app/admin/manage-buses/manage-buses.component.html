@@ -1,1 +1,22 @@
-<p>manage-buses works!</p>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 mt-5" *ngFor="let b of buses">
+            <div class="card">
+                    <img [src]="b.busImage" class="card-img-top" height="200" alt="">
+                    <h3 class="text-center">{{b.busName}}</h3>
+                <div class="card-body">
+                    <p><b>Bus Number: </b>{{b.busNumber}}</p>
+                    <p><b>Route: </b>{{b.from}} <i class="fa fa-arrow-right"></i> {{b.to}}</p>
+                    <p><b>Departure: </b>{{b.departure}}</p>
+                    <p><b>Arrival: </b>{{b.arrival}}</p>
+                    <p><b>Price: </b><span class="badge bg-warning">{{b.price | currency: 'INR'}}</span></p>
+                    <p><b>Seats: </b>{{b.seats}}</p>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <button class="btn btn-success"><i class="fa fa-edit"></i>Update</button>
+                    <button class="btn btn-danger"><i class="fa fa-trash"></i>Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -11,7 +11,6 @@ import { BookingHistoryComponent } from './user/booking-history/booking-history.
 import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard.component';
 import { ManageBusesComponent } from './admin/manage-buses/manage-buses.component';
 import { AddBusComponent } from './admin/add-bus/add-bus.component';
-import { EditBusComponent } from './admin/edit-bus/edit-bus.component';
 import { ViewBusComponent } from './admin/view-bus/view-bus.component';
 import { UserDashboardComponent } from './user/user-dashboard/user-dashboard.component';
 import { FormsModule } from '@angular/forms';
@@ -29,7 +28,6 @@ import { LoginComponent } from './login/login.component';
     AdminDashboardComponent,
     ManageBusesComponent,
     AddBusComponent,
-    EditBusComponent,
     ViewBusComponent,
     UserDashboardComponent,
     LoginComponent

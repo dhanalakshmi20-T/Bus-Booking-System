@@ -1,10 +1,11 @@
-<nav class="navbar navbar-expand-md navbar-light bg-light">
+<nav class="navbar navbar-expand-md navbar-light bg-warning">
     <div class="container">
         <ul class="navbar-nav">
-            <li class="nav-item"><a routerLink="/admin/" class="nav-link">Add Bus</a></li>
-            <li class="nav-item"><a routerLink="/admin/" class="nav-link">View Bus</a></li>
-            <li class="nav-item"><a routerLink="/admin/" class="nav-link">Manage Bus</a></li>
-            <li class="nav-item"><a routerLink="/admin/" class="nav-link">Edit Bus</a></li>
+            <li class="nav-item"><a routerLink="/admin/add" class="nav-link">Add Bus</a></li>
+            <li class="nav-item"><a routerLink="/admin/view" class="nav-link">View Bus</a></li>
+            <li class="nav-item"><a routerLink="/admin/manage" class="nav-link">Manage Bus</a></li>
         </ul>
     </div>
 </nav>
+
+<router-outlet></router-outlet>
