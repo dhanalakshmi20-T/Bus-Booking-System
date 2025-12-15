@@ -1,0 +1,51 @@
+<div class="container">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-6">
+            <form [formGroup]="AddBus" (ngSubmit)="addnow()">
+                <div class="form-group mt-3">
+                    <label for="" class="form-label">Bus Image</label>
+                    <input type="text" class="form-control" formControlName="busImage">
+                </div>
+                <div class="form-group mt-3">
+                    <label for="" class="form-label">Bus Name</label>
+                    <input type="text" class="form-control" formControlName="busName">
+                </div>
+                <div class="form-group mt-3">
+                    <label for="" class="form-label">Bus Number</label>
+                    <input type="text" class="form-control" formControlName="busNumber">
+                </div>
+                <div class="form-group">
+                    <label for="" class="form-label">Date</label>
+                    <input type="date" class="form-control" formControlName="date">
+                </div>
+                <div class="form-group mt-3">
+                    <label for="" class="form-label">Form</label>
+                    <input type="text" class="form-control" formControlName="from">
+                </div>
+                <div class="form-group mt-3">
+                    <label for="" class="form-label">To</label>
+                    <input type="text" class="form-control" formControlName="to">
+                </div>
+                <div class="form-group mt-3">
+                    <label for="" class="form-label">Departure</label>
+                    <input type="time" class="form-control" formControlName="departure">
+                </div>
+                <div class="form-group mt-3">
+                    <label for="" class="form-label">Arrival</label>
+                    <input type="time" class="form-control" formControlName="arrival">
+                </div>
+                <div class="form-group mt-3">
+                    <label for="" class="form-label">Price</label>
+                    <input type="text" class="form-control" formControlName="price">
+                </div>
+                <div class="form-group mt-3">
+                    <label for="" class="form-label">Seats</label>
+                    <input type="text" class="form-control" formControlName="seats">
+                </div>
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-success">Add Now</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

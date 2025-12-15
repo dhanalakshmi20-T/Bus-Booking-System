@@ -13,7 +13,7 @@ import { ManageBusesComponent } from './admin/manage-buses/manage-buses.componen
 import { AddBusComponent } from './admin/add-bus/add-bus.component';
 import { ViewBusComponent } from './admin/view-bus/view-bus.component';
 import { UserDashboardComponent } from './user/user-dashboard/user-dashboard.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './login/login.component';
 
@@ -36,7 +36,8 @@ import { LoginComponent } from './login/login.component';
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
