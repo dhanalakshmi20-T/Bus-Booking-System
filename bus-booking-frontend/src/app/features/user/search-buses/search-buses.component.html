@@ -1,1 +1,27 @@
-<p>search-buses works!</p>
+<div class="search-page">
+    <div class="search-bar">
+        <input [(ngModel)]="from" placeholder="From">
+        <input [(ngModel)]="to" placeholder="To">
+        <input type="date" [(ngModel)]="date">
+        <button (click)="search()">Search</button>
+    </div>
+
+    <div class="loading" *ngIf="loading">Searching buses...</div>
+
+    <div class="empty" *ngIf="!loading && buses.length === 0">No buses found.</div>
+
+    <div class="bus-list">
+        <div class="bus-card" *ngFor="let bus of buses">
+            <div class="bus-info">
+                <h3>{{ bus.busName }}</h3>
+                <p>{{ bus.from }} → {{ bus.to }}</p>
+                <p>{{ bus.date }} | {{ bus.departureTime }} - {{ bus.arrivalTime }}</p>
+                <p>Available: {{ availableSeats(bus) }} seats</p>
+            </div>
+            <div class="bus-fare">
+                <span class="fare">₹{{ bus.fare }}</span>
+                <button (click)="selectBus(bus)">Select Seats</button>
+            </div>
+        </div>
+    </div>
+</div>

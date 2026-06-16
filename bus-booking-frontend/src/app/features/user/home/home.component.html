@@ -1,1 +1,25 @@
-<p>home works!</p>
+<div class="hero">
+    <h1>Book Your Bus Ticket</h1>
+    <p>Find the best routes at the best prices</p>
+    <div class="search-box">
+        <input [(ngModel)]="from" placeholder="From (e.g. Chennai)">
+        <input [(ngModel)]="to" placeholder="To (e.g. Bangalore)">
+        <input type="date" [(ngModel)]="date">
+        <button (click)="search()">Search</button>
+    </div>
+</div>
+
+<div class="features">
+    <div class="feature-card">
+        <h3>Easy Booking</h3>
+        <p>Book your ticket in just a few clicks</p>
+    </div>
+    <div class="feature-card">
+        <h3>Choose Your Seat</h3>
+        <p>Pick your preferred seat from the layout</p>
+    </div>
+    <div class="feature-card">
+        <h3>Track Bookings</h3>
+        <p>View and manage all your bookings</p>
+    </div>
+</div>

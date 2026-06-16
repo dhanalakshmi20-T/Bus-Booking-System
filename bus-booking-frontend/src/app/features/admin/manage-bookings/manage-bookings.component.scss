@@ -1,0 +1,26 @@
+.manage-bookings { max-width: 1000px; margin: 0 auto; }
+h2 { color: #1a237e; }
+
+.bookings-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+
+  th { background: #1a237e; color: white; padding: 12px; text-align: left; }
+  td { padding: 12px; border-bottom: 1px solid #eee; vertical-align: top; small { color: #888; } }
+}
+
+.status {
+  display: inline-block;
+  padding: 4px 10px;
+  background: #c8e6c9;
+  color: #2e7d32;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  &.cancelled { background: #ffcdd2; color: #c62828; }
+}
+
+.empty { text-align: center; padding: 40px; color: #888; }

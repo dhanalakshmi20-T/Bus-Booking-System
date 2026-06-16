@@ -1,1 +1,30 @@
-<p>seat-selection works!</p>
+<div class="seat-page" *ngIf="bus">
+  <h2>{{ bus.busName }} — {{ bus.from }} to {{ bus.to }}</h2>
+  <p>{{ bus.date }} | Departure: {{ bus.departureTime }} | Fare: ₹{{ bus.fare }}/seat</p>
+
+  <div class="legend">
+    <span class="available">Available</span>
+    <span class="selected">Selected</span>
+    <span class="booked">Booked</span>
+  </div>
+
+  <div class="seat-grid">
+    <div
+      *ngFor="let seat of bus.seats"
+      class="seat"
+      [class.booked]="seat.isBooked"
+      [class.selected]="isSelected(seat.seatNumber)"
+      (click)="toggleSeat(seat)">
+      {{ seat.seatNumber }}
+    </div>
+  </div>
+
+  <div class="booking-summary" *ngIf="selectedSeats.length > 0">
+    <p>Selected: {{ selectedSeats.join(', ') }}</p>
+    <p>Total Fare: ₹{{ totalFare }}</p>
+    <input [(ngModel)]="passengerName" placeholder="Passenger name" />
+    <button (click)="confirmBooking()">Confirm Booking</button>
+  </div>
+
+  <p class="message" *ngIf="message">{{ message }}</p>
+</div>

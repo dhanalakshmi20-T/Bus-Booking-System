@@ -1,1 +1,17 @@
-<p>my-bookings works!</p>
+<div class="bookings-page">
+  <h2>My Bookings</h2>
+  <p class="message" *ngIf="message">{{ message }}</p>
+
+  <div *ngIf="bookings.length === 0" class="empty">No bookings found.</div>
+
+  <div class="booking-card" *ngFor="let booking of bookings">
+    <div class="booking-info">
+      <h3>{{ booking.busDetails?.busName || 'Bus' }}</h3>
+      <p>{{ booking.busDetails?.from }} → {{ booking.busDetails?.to }}</p>
+      <p>Date: {{ booking.busDetails?.date }} | Fare: ₹{{ booking.totalFare }}</p>
+      <p>Passengers: {{ booking.passengers?.length }}</p>
+      <span class="status" [class.cancelled]="booking.status === 'cancelled'">{{ booking.status }}</span>
+    </div>
+    <button *ngIf="booking.status !== 'cancelled'" (click)="cancel(booking._id)" class="cancel-btn">Cancel</button>
+  </div>
+</div>
