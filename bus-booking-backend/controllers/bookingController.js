@@ -19,7 +19,7 @@ exports.createBooking = (req, res) => {
         });
 
         const totalFare = bus.fare * passengers.length;
-        const booking = bookings.create({
+        const booking = Booking.create({
             user: req.user.id,
             bus: busId,
             passengers,
@@ -57,7 +57,7 @@ exports.cancelBooking = (req, res) => {
             });
         }
 
-        Booking.findByIdAndUpdate(req.params.is, { status: 'cancelled' });
+        Booking.findByIdAndUpdate(req.params.id, { status: 'cancelled' });
         res.json({ message: 'Booking cancelled' });
     } catch (err) {
         res.status(500).json({ message: err.message });

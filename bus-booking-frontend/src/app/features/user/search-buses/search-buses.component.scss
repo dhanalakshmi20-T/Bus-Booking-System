@@ -25,6 +25,15 @@
         border-radius: 4px;
         cursor: pointer;
     }
+
+    @media (max-width: 640px) {
+        flex-direction: column;
+
+        input, button {
+            width: 100%;
+            min-width: unset;
+        }
+    }
 }
 
 .bus-card {
@@ -36,6 +45,7 @@
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     margin-bottom: 16px;
+    gap: 16px;
 
     h3 {
         color: #1a237e;
@@ -46,10 +56,16 @@
         margin: 4px;
         color: #555;
     }
+
+    @media (max-width: 560px) {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 
 .bus-fare {
     text-align: right;
+    flex-shrink: 0;
 
     .fare {
         display: block;
@@ -66,6 +82,16 @@
         border: none;
         border-radius: 4px;
         cursor: pointer;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 560px) {
+        text-align: left;
+        width: 100%;
+
+        button {
+            width: 100%;
+        }
     }
 }
 

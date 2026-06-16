@@ -18,7 +18,7 @@ exports.getBusById = (req, res) => {
     try {
         const bus = Bus.findById(req.params.id);
         if (!bus) return res.status(404).json({ message: 'Bus not found' });
-        req.json(bus);
+        res.json(bus);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -35,8 +35,9 @@ exports.createBus = (req, res) => {
 
 exports.updateBus = (req, res) => {
     try {
-        const bus = Bus.findByIdAndDelete(req.params.id);
-        res.json({ message: 'Bus deleted' });
+        const bus = Bus.findByIdAndUpdate(req.params.id, req.body);
+        if (!bus) return res.status(404).json({ message: 'Bus not found' });
+        res.json(bus);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

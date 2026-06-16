@@ -3,6 +3,7 @@
     justify-content: center;
     align-items: center;
     min-height: 80vh;
+    padding: 16px;
 }
 
 .auth-card {
@@ -26,7 +27,7 @@
 
     .form-group {
         margin-bottom: 16px;
-        
+
         label {
             display: block;
             margin-bottom: 4px;
@@ -36,9 +37,10 @@
         input {
             width: 100%;
             padding: 10px;
-            border: 1px solid#ccc;
+            border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
+            font-size: 1rem;
         }
     }
 
@@ -64,5 +66,9 @@
         a {
             color: #1a237e;
         }
+    }
+
+    @media (max-width: 480px) {
+        padding: 24px 16px;
     }
 }

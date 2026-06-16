@@ -2,21 +2,29 @@
 h2 { color: #1a237e; }
 
 .stats {
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+
+    @media (max-width: 480px) {
+        flex-direction: column;
+    }
 }
 
 .stat-card {
-  flex: 1;
-  min-width: 180px;
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  text-align: center;
+    flex: 1;
+    min-width: 180px;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-align: center;
 
-  h3 { color: #555; font-size: 1rem; margin-bottom: 8px; }
-  span { display: block; font-size: 2.5rem; font-weight: bold; color: #1a237e; }
-  a { display: inline-block; margin-top: 12px; color: #e53935; }
+    h3 { color: #555; font-size: 1rem; margin-bottom: 8px; }
+    span { display: block; font-size: 2.5rem; font-weight: bold; color: #1a237e; }
+    a { display: inline-block; margin-top: 12px; color: #e53935; }
+
+    @media (max-width: 480px) {
+        min-width: unset;
+    }
 }

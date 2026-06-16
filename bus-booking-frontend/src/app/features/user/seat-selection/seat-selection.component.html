@@ -1,30 +1,128 @@
 <div class="seat-page" *ngIf="bus">
-  <h2>{{ bus.busName }} — {{ bus.from }} to {{ bus.to }}</h2>
-  <p>{{ bus.date }} | Departure: {{ bus.departureTime }} | Fare: ₹{{ bus.fare }}/seat</p>
 
-  <div class="legend">
-    <span class="available">Available</span>
-    <span class="selected">Selected</span>
-    <span class="booked">Booked</span>
-  </div>
-
-  <div class="seat-grid">
-    <div
-      *ngFor="let seat of bus.seats"
-      class="seat"
-      [class.booked]="seat.isBooked"
-      [class.selected]="isSelected(seat.seatNumber)"
-      (click)="toggleSeat(seat)">
-      {{ seat.seatNumber }}
+  <!-- Bus Info Header -->
+  <div class="bus-header">
+    <div class="bus-title">
+      <h2><i class="fa-solid fa-bus"></i> {{ bus.busName }}</h2>
+      <div class="route-badge">
+        <span class="city">{{ bus.from }}</span>
+        <i class="fa-solid fa-arrow-right"></i>
+        <span class="city">{{ bus.to }}</span>
+      </div>
+    </div>
+    <div class="bus-meta">
+      <span><i class="fa-regular fa-calendar"></i> {{ bus.date }}</span>
+      <span><i class="fa-regular fa-clock"></i> {{ bus.departureTime }} – {{ bus.arrivalTime }}</span>
+      <span><i class="fa-solid fa-tag"></i> ₹{{ bus.fare }} / seat</span>
     </div>
   </div>
 
-  <div class="booking-summary" *ngIf="selectedSeats.length > 0">
-    <p>Selected: {{ selectedSeats.join(', ') }}</p>
-    <p>Total Fare: ₹{{ totalFare }}</p>
-    <input [(ngModel)]="passengerName" placeholder="Passenger name" />
-    <button (click)="confirmBooking()">Confirm Booking</button>
-  </div>
+  <div class="content-grid">
 
-  <p class="message" *ngIf="message">{{ message }}</p>
+    <!-- Seat Map -->
+    <div class="seat-section">
+
+      <div class="legend">
+        <div class="legend-item">
+          <span class="seat-demo available"></span> Available
+        </div>
+        <div class="legend-item">
+          <span class="seat-demo selected"></span> Selected
+        </div>
+        <div class="legend-item">
+          <span class="seat-demo booked"></span> Booked
+        </div>
+      </div>
+
+      <div class="bus-layout">
+        <div class="driver-row">
+          <i class="fa-solid fa-steering-wheel"></i>
+          <span>Driver</span>
+        </div>
+
+        <div class="seat-rows">
+          <div class="seat-row" *ngFor="let row of rows; let i = index">
+            <span class="row-label">{{ i + 1 }}</span>
+
+            <div class="seat-pair">
+              <ng-container *ngFor="let seat of row.slice(0, 2)">
+                <div *ngIf="seat"
+                     class="seat"
+                     [class.booked]="seat.isBooked"
+                     [class.selected]="isSelected(seat.seatNumber)"
+                     (click)="toggleSeat(seat)"
+                     [title]="seat.isBooked ? 'Booked' : 'Seat ' + seat.seatNumber">
+                  {{ seat.seatNumber }}
+                </div>
+                <div *ngIf="!seat" class="seat-placeholder"></div>
+              </ng-container>
+            </div>
+
+            <div class="aisle"></div>
+
+            <div class="seat-pair">
+              <ng-container *ngFor="let seat of row.slice(2, 4)">
+                <div *ngIf="seat"
+                     class="seat"
+                     [class.booked]="seat.isBooked"
+                     [class.selected]="isSelected(seat.seatNumber)"
+                     (click)="toggleSeat(seat)"
+                     [title]="seat.isBooked ? 'Booked' : 'Seat ' + seat.seatNumber">
+                  {{ seat.seatNumber }}
+                </div>
+                <div *ngIf="!seat" class="seat-placeholder"></div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="avail-note">
+        <i class="fa-solid fa-circle-info"></i>
+        {{ availableCount }} of {{ bus.seats.length }} seats available
+      </p>
+    </div>
+
+    <!-- Booking Summary -->
+    <div class="summary-section">
+      <div class="booking-summary" *ngIf="selectedSeats.length > 0; else noSelection">
+        <h3>Booking Summary</h3>
+
+        <div class="selected-chips">
+          <span class="chip" *ngFor="let s of selectedSeats">Seat {{ s }}</span>
+        </div>
+
+        <div class="fare-breakdown">
+          <div class="fare-row">
+            <span>{{ selectedSeats.length }} seat(s) × ₹{{ bus.fare }}</span>
+            <strong>₹{{ totalFare }}</strong>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Passenger Name</label>
+          <input [(ngModel)]="passengerName" placeholder="Enter passenger name" />
+        </div>
+
+        <button class="confirm-btn" (click)="confirmBooking()">
+          <i class="fa-solid fa-check"></i> Confirm Booking
+        </button>
+
+        <p class="alert success" *ngIf="message && !isError">
+          <i class="fa-solid fa-circle-check"></i> {{ message }}
+        </p>
+        <p class="alert error" *ngIf="message && isError">
+          <i class="fa-solid fa-circle-exclamation"></i> {{ message }}
+        </p>
+      </div>
+
+      <ng-template #noSelection>
+        <div class="no-selection">
+          <i class="fa-solid fa-couch"></i>
+          <p>Select seats from the layout to begin your booking</p>
+        </div>
+      </ng-template>
+    </div>
+
+  </div>
 </div>

@@ -1,21 +1,27 @@
 <nav class="navbar">
     <div class="brand">
-        <a routerLink="/home">
+        <a routerLink="/home" (click)="closeMenu()">
             <i class="fa-solid fa-bus"></i> BusBook
         </a>
     </div>
 
-    <ul class="nav-links">
+    <button class="hamburger" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <ul class="nav-links" [class.open]="menuOpen">
         <ng-container *ngIf="authService.isLoggedIn(); else guestLinks">
-            <li><a routerLink="/home">Home</a></li>
-            <li><a routerLink="/search">Search</a></li>
-            <li><a routerLink="/my-bookings">My Bookings</a></li>
-            <li *ngIf="authService.isAdmin()"><a routerLink="/admin/dashboard">Admin</a></li>
-            <li><button (click)="logout()"></button></li>
+            <li><a routerLink="/home" (click)="closeMenu()">Home</a></li>
+            <li><a routerLink="/search" (click)="closeMenu()">Search</a></li>
+            <li><a routerLink="/my-bookings" (click)="closeMenu()">My Bookings</a></li>
+            <li *ngIf="authService.isAdmin()"><a routerLink="/admin/dashboard" (click)="closeMenu()">Admin</a></li>
+            <li><button (click)="logout()">Logout</button></li>
         </ng-container>
         <ng-template #guestLinks>
-            <li><a routerLink="/auth/login">Login</a></li>
-            <li><a routerLink="/auth/register">Register</a></li>
+            <li><a routerLink="/auth/login" (click)="closeMenu()">Login</a></li>
+            <li><a routerLink="/auth/register" (click)="closeMenu()">Register</a></li>
         </ng-template>
     </ul>
 </nav>
