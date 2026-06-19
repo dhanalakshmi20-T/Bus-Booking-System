@@ -1,3 +1,182 @@
-<div class="register-container">
-  <h2>Register</h2>
+<div class="register-page">
+  <div class="container-fluid h-100">
+    <div class="row h-100">
+      <div class="col-lg-6 d-none d-lg-flex left-panel">
+        <div class="left-content">
+          <div class="brand">
+            <i class="bi bi-bus-front-fill brand-icon"></i>
+            <span class="brand-name">BusBook</span>
+          </div>
+
+          <h2 class="left-title">Join Thousands of Happy Travellers</h2>
+          <p class="left-subtitle">
+            Create your free account today and start booking bus tickets across India in minutes.
+          </p>
+
+          <ul class="left-features">
+            <li>
+              <span class="feat-icon"><i class="bi bi-person-check-fill"></i></span>
+              Free account - no hidden charges
+            </li>
+
+            <li>
+              <span class="feat-icon"><i class="bi bi-ticket-perforated-fill"></i></span>
+              Instant e-tickets on your phone
+            </li>
+
+            <li>
+              <span class="feat-icon"><i class="bi bi-bell-fill"></i></span>
+              Real-time booking notifications
+            </li>
+
+            <li>
+              <span class="feat-icon"><i class="bi bi-star-fill"></i></span>
+              Exclusive member discounts
+            </li>
+          </ul>
+
+          <div class="left-stats">
+            <div class="stat">
+              <div class="stat-value">10K+</div>
+              <div class="stat-label">Members</div>
+            </div>
+
+            <div class="stat">
+              <div class="stat-value">500+</div>
+              <div class="stat-label">Routes</div>
+            </div>
+
+            <div class="stat">
+              <div class="stat-value">50+</div>
+              <div class="stat-label">Cities</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 col-12 right-panel">
+        <div class="form-wrapper">
+          <div class="mobile-brand d-flex d-lg-none">
+            <i class="bi bi-bus-front-fill"></i>
+            <span>BusBook</span>
+          </div>
+
+          <h3 class="form-title">Create Account</h3>
+          <p class="form-subtitle">Sign up for free and start your journey</p>
+
+          <div class="alert alert-danger d-flex align-items-center gap-2" *ngIf="errorMessage">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            {{ errorMessage }}
+          </div>
+
+          <form (ngSubmit)="onRegister()">
+            <div class="mb-3">
+              <label class="form-label">Full Name</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-person-fill"></i>
+                </span>
+                <input type="text" class="form-control" placeholder="Enter your name" [(ngModel)]="name" name="name" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Email Address</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-envelope-fill"></i>
+                </span>
+                <input type="email" class="form-control" placeholder="Enter your email" [(ngModel)]="email" name="email" required>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label">Password</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-lock-fill"></i>
+                </span>
+
+                <input [type]="showPassword ? 'text' : 'password'" class="form-control" placeholder="Minimum 6 characters" [(ngModel)]="password" name="password" required>
+
+                <button type="button" class="input-group-text toggle-eye" (click)="togglePassword()">
+                  <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="strength-bar mb-3" *ngIf="password.length > 0">
+              <div class="strength-track">
+                <div class="strength-fill" [ngClass]="passwordStrength"></div>
+              </div>
+
+              <small class="strength-label" [ngClass]="passwordStrength">
+                Password Strength:
+                <strong>{{ passwordStrength | titlecase }}</strong>
+              </small>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">Confirm Password</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-lock-fill"></i>
+                </span>
+                <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control" [class.is-valid]="passwordsMatch" [class.is-invalid]="confirmPassword && !passwordsMatch" placeholder="Re-enter your password" [(ngModel)]="confirmPassword" required>
+
+                <button type="button" class="input-group-text toggle-eye" (click)="toggleConfirmPassword()">
+                  <i class="bi" [ngClass]="showConfirmPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'"></i>
+                </button>
+              </div>
+
+              <div class="match-msg" ?*ngIf="confirmPassword">
+                <span class="text-success" *ngIf="passwordsMatch">
+                  <i class="bi bi-check-circle-fill"></i>
+                  Passwords Match
+                </span>
+
+                <span class="text-danger" *ngIf="!passwordsMatch">
+                  <i class="bi bi-exclamation-circle-fill"></i>
+                  Passwords do not match
+                </span>
+              </div>
+            </div>
+
+            <div class="mb-4 d-flex align-items-start gap-2">
+              <input type="checkbox" class="form-check-input mt-1" id="terms" required>
+              <label class="form-check-label text-muted small" for="terms">
+                I agree to the
+                <a href="#" class="terms-link">Terms of Service</a>
+                and
+                <a href="#" class="terms-link">Privacy Policy</a>
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn-register w-100" [disabled]="isLoading">
+              <span *ngIf="!isLoading">
+                <i class="bi bi-person-plus-fill"></i>
+                Create Account
+              </span>
+              <span *ngIf="isLoading">
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                Creating account...
+              </span>
+            </button>
+          </form>
+
+          <div class="divider my-4">
+            <span>or</span>
+          </div>
+
+          <p class="login-text text-center">
+            Already have an accpunt?
+            <a routerLink="/auth/login" class="login-link">
+              Sign in here
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

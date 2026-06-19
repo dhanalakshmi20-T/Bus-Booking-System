@@ -1,0 +1,217 @@
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7 text-center text-lg-start">
+                <span class="hero-badge">
+                    <i class="bi bi-star-fill"></i>
+                    Trusted by 10,000+ travellers
+                </span>
+
+                <h1 class="hero-title">
+                    Travel Smarter, <br>
+                    <span class="highlight">Book Faster</span>
+                </h1>
+
+                <p class="hero-subtitle">
+                    Book bus ticket instantly across 50+ cities in India.
+                    Safe, reliable and affordable travel at your fingertips.
+                </p>
+
+                <div class="hero-btns">
+                    <a routerLink="/auth/register" class="btn btn-primary-lavender">
+                        <i class="bi bi-person-plus-fill"></i>
+                        Get Started Free
+                    </a>
+                    <a routerLink="/auth/login" class="btn btn-outline-lavender">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        Login
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-5 mt-5 mt-lg-0">
+                <div class="search-card">
+                    <h5 class="search-title">
+                        <i class="bi bi-search"></i>
+                        Search Buses
+                    </h5>
+
+                    <div class="mb-3">
+                        <label class="form-label">From</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-geo-alt-fill text-lavender"></i>
+                            </span>
+                            <input type="text" class="form-control" placeholder="Departure city" [(ngModel)="from">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">To</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-geo-fill text-lavender"></i>
+                            </span>
+                            <input type="text" class="form-control" placeholder="Destination city" [(ngModel)]="to">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Journey Date</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-calendar3 text-lavender"></i>
+                            </span>
+                            <input type="date" class="form-control" [(ngModel)]="date">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary-lavender w-100" (click)="onSearch()">
+                        <i class="bi bi-search"></i>
+                        Search Available Buses
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="stats-section">
+    <div class="container">
+        <div class="row g-3 justify-content-center">
+            <div class="col-6 col-md-3" *ngFor="let stat of stats">
+                <div class="stat-card text-center">
+                    <div class="stat-value">{{ stat.value }}</div>
+                    <div class="stat-label">{{ stat.label }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features-section">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <span class="section-badge">Why BusBook?</span>
+            <h2 class="section-title">Everything you need for a <span class="highlight">perfect journey</span></h2>
+            <p class="section-subtitle">We make bus travel simple, safe and enjoyable for everyone.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" *ngFor="let feature of features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi {{ feature.icon }}"></i>
+                    </div>
+
+                    <h5 class="feature-title">{{ feature.title }}</h5>
+                    <p class="feature-desc">{{ feature.desc }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="how-section">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <span class="section-badge">Simple Steps</span>
+            <h2 class="search-title">How It <span class="highlight">Works</span></h2>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-3 col-md-6 text-center">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <i class="bi bi-search step-icon"></i>
+                    <h6 class="step-title">Search</h6>
+                    <p class="step-desc">Enter your from, to and travel date to find available buses.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 text-center">
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <i class="bi bi-grid-3x3-gap-fill step-icon"></i>
+                    <h6 class="step-title">Select Seat</h6>
+                    <p class="step-desc">Choose your preferred seat from the available seats layout.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 text-center">
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <i class="bi bi-credit-card-fill step-icon"></i>
+                    <h6 class="step-title">Pay Securely</h6>
+                    <p class="step-desc">Complete your booking with our safe and secure payment.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 text-center">
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <i class="bi bi-ticket-perforated-fill step-icon"></i>
+                    <h6 class="step-title">Get Ticket</h6>
+                    <p class="step-desc">Receive your e-ticket instantly and board your bus!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="routes-section">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <span class="section-badge">Top Picks</span>
+            <h2 class="section-title">Popular <span class="highlight">Routes</span></h2>
+            <p class="section-subtitle">Most booked bus routes across India.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" *ngFor="let route of popularRoutes">
+                <div class="route-card">
+                    <div class="route-cities">
+                        <span class="city-from">
+                            <i class="bi bi-circle-fill"></i> {{ route.from }}
+                        </span>
+                        <div class="route-line">
+                            <i class="bi bi-bus-front-fill"></i>
+                        </div>
+                        <span class="city-to">
+                            <i class="bi bi-geo-alt-fill"></i> {{ route.to }}
+                        </span>
+                    </div>
+
+                    <div class="route-info">
+                        <span><i class="bi bi-clock"></i> {{ route.duration }}</span>
+                        <span class="route-fare">{{ route.fare }}</span>
+                    </div>
+
+                    <a routerLink="/auth/register" class="btn btn-route w-100 mt-3">
+                        Book Now
+                        <i class="bi bi-box-arrow-in-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container text-center">
+        <i class="bi bi-bus-front-fill cta-icon"></i>
+        <h2 class="cta-title">Ready to start your journey?</h2>
+        <p class="cta-subtitle">Join thousands of happy travellers booking with BusBook every day.</p>
+
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a routerLink="/auth/register" class="btn btn-primary-lavender btn-lg">
+                <i class="bi bi-person-plus-fill"></i>
+                Create Free Account
+            </a>
+            <a routerLink="/auth/login" class="btn btn-outline-lavender btn-lg">
+                <i class="bi bi-box-arrow-in-right"></i>
+                Login
+            </a>
+        </div>
+    </div>
+</section>

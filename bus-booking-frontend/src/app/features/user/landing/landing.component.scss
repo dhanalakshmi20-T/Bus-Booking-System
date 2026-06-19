@@ -1,0 +1,460 @@
+$lavender: #7c4dff;
+$lavender-dark: #4527a0;
+$lavender-light: #ede7f6;
+$lavender-pale: #f5f0ff;
+$text-dark: #2d1b69;
+$text-muted: #6d5f7e;
+
+.hero-section {
+    background: linear-gradient(135deg, #f5f0ff 0%, #ede7f6 50%, #e8eaf6 100%);
+    padding: 80px 0 60px;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: $lavender-light;
+        color: $lavender;
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 6px 16px;
+        border-radius: 20px;
+        margin-bottom: 1.2rem;
+
+        i {
+            color: #f4c430;
+        }
+    }
+
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        color: $text-dark;
+        line-height: 1.2;
+        margin-bottom: 1.2rem;
+
+        .highlight {
+            color: $lavender;
+            position: relative;
+        }
+    }
+
+    .hero-subtitle {
+        font-size: 1.05rem;
+        color: $text-muted;
+        line-height: 1.7;
+        margin-bottom: 2rem;
+        max-width: 480px;
+    }
+
+    .hero-btns {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+}
+    
+.search-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 20px 60px rgba(124, 77, 255, 0.15);
+    border: 1px solid #e1d5f5;
+
+     .search-title {
+        color: $lavender-dark;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+
+        i {
+            color: $lavender;
+            margin-right: 6px;
+        }
+    }
+
+    .form-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: $text-dark;
+    }
+
+    .input-group-text {
+        background: $lavender-pale;
+        border-color: #d1c4e9;
+        font-size: 0.9rem;
+
+        &:focus {
+            border-color: $lavender;
+            box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.12);
+        }
+    }
+
+    .text-lavender {
+        color: $lavender;
+    }
+}
+
+.btn-primary-lavender {
+    background: $lavender;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 24px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    text-decoration: none;
+
+    &:hover {
+        background: $lavender-dark;
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(124, 77, 255, 0.3);
+    }
+}
+
+.btn-outline-lavender {
+    background: transparent;
+    color: $lavender;
+    border: 2px solid $lavender;
+    border-radius: 10px;
+    padding: 10px 24px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    text-decoration: none;
+    
+    &:hover {
+        background: $lavender;
+        color: #fff;
+        transform: translateY(-2px);
+    }
+}
+
+.stats-section {
+    background: $lavender;
+    padding: 50px 0;
+
+    .stat-card {
+        padding: 1rem;
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .stat-label {
+            font-size: 0.88rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 4px;
+        }
+    }
+}
+
+.section-badge {
+    display: inline-block;
+    background: $lavender-light;
+    color: $lavender;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: $text-dark;
+
+    .highlight {
+        color: $lavender;
+    }
+}
+
+.section-subtitle {
+    color: $text-muted;
+    font-size: 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.features-section {
+    padding: 80px 0;
+    background: #fff;
+
+    .feature-card {
+        background: $lavender-pale;
+        border-radius: 16px;
+        padding: 2rem;
+        height: 100%;
+        border: 1px solid #e1d5f5;
+        transition: all 0.3s;
+
+        &:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 40px rgba(124, 77, 255, 0.15);
+            background: #fff;
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: $lavender-light;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.2rem;
+
+            i {
+                font-size: 1.6rem;
+                color: $lavender;
+            }
+        }
+
+        .feature-title {
+            font-weight: 700;
+            color: $text-dark;
+            margin-bottom: 8px;
+        }
+
+        .feature-desc {
+            font-size: 0.9rem;
+            color: $text-muted;
+            line-height: 1.6;
+            margin: 0;
+        }
+    }
+}
+
+.how-section {
+    padding: 80px 0;
+    background: $lavender-pale;
+
+    .step-card {
+        position: relative;
+        padding: 2rem 1rem;
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            background: $lavender;
+            color: #fff;
+            border-radius: 50%;
+            font-weight: 800;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .step-icon {
+            font-size: 2.5rem;
+            color: $lavender;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .step-title {
+            font-weight: 700;
+            color: $text-dark;
+            margin-bottom: 8px;
+        }
+
+        .step-desc {
+            font-size: 0.88rem;
+            color: $text-muted;
+            line-height: 1.6;
+        }
+    }
+}
+
+.routes-section {
+    padding: 80px 0;
+    background: #fff;
+
+    .route-card {
+        background: $lavender-pale;
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 1px solid #e1d5f5;
+        transition: all 0.3s;
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(124, 77, 255, 0.15);
+        }
+
+        .route-cities {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+
+            .city-from, .city-to {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-weight: 700;
+                color: $text-dark;
+                font-size: 1rem;
+
+                i {
+                    font-size: 0.7rem;
+                    color: $lavender;
+                }
+            }
+
+            .route-line {
+                flex: 1;
+                text-align: center;
+                color: $lavender;
+                font-size: 1.4rem;
+                position: relative;
+
+                &::before, &::after {
+                    content: '';
+                    position: absolute;
+                    top: 50%;
+                    width: 25%;
+                    height: 1px;
+                    background: #d1c4e9;
+                }
+
+                &::before {
+                    left: 10%;
+                }
+
+                &::after {
+                    right: 10%;
+                }
+            }
+        }
+
+        .route-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.88rem;
+            color: $text-muted;
+
+            i {
+                margin-right: 4px;
+            }
+
+            .route-fare {
+                font-weight: 800;
+                font-size: 1.1rem;
+                color: $lavender;
+            }
+        }
+
+        .btn-route {
+            background: #fff;
+            color: $lavender;
+            border: 1.5px solid $lavender;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            padding: 7px;
+            transition: all 0.2s;
+
+            &:hover {
+                background: $lavender;
+                color: #fff;
+            }
+        }
+    }
+}
+
+.cta-section {
+    background: linear-gradient(135deg, $lavender-dark, $lavender);
+    padding: 80px 0;
+    color: #fff;
+
+    .cta-icon {
+        font-size: 3rem;
+        display: block;
+        margin-bottom: 1rem;
+        opacity: 0.9;
+    }
+
+    .cta-title {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+    }
+
+    .cta-subtitle {
+        font-size: 1rem;
+        opacity: 0.85;
+        margin-bottom: 2rem;
+    }
+
+    .btn-primary-lavender {
+        background: #fff;
+        color: $lavender;
+
+        &:hover {
+            background: $lavender-light;
+            color: $lavender-dark;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+    }
+
+    .btn-outline-lavender {
+        border-color: #fff;
+        color: #fff;
+
+        &:hover {
+            background: #fff;
+            color: $lavender;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 50px 0 40px;
+        min-height: auto;
+
+        .hero-title {
+            font-size: 2rem;
+        }
+
+        .hero-subtitle {
+            font-size: 0.95rem;
+        }
+
+        .hero-btns {
+            justify-content: center;
+        }
+    }
+
+    .stats-section .stat-card .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .cta-title {
+        font-size: 1.5rem;
+    }
+}

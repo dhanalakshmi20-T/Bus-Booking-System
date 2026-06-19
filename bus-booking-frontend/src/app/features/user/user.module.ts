@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { UserRoutingModule } from './user-routing.module';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -12,6 +13,7 @@ import { MyBookingsComponent } from './my-bookings/my-bookings.component';
 import { ProfileComponent } from './profile/profile.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { SettingsComponent } from './settings/settings.component';
+import { LandingComponent } from './landing/landing.component';
 
 @NgModule({
   declarations: [
@@ -22,10 +24,12 @@ import { SettingsComponent } from './settings/settings.component';
     MyBookingsComponent,
     ProfileComponent,
     NotificationsComponent,
-    SettingsComponent
+    SettingsComponent,
+    LandingComponent
   ],
   imports: [
     CommonModule,
+    FormsModule,
     UserRoutingModule,
     SharedModule
   ]
