@@ -1,39 +1,61 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
+
+export interface Bus {
+  id: number;
+  busName: string;
+  busNumber: string;
+  busType: string;
+  from: string;
+  to: string;
+  departureTime: string;
+  arrivalTime: string;
+  totalSeats: number;
+  availableSeats: number;
+  fare: number;
+  status: string;
+}
+
+export interface SearchParams {
+  from: string;
+  to: string;
+  date: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class BusService {
+  private apiUrl = 'http://localhost:8080/api/buses';
 
-  private apiUrl = `${environment.apiUrl}/buses`;
+  constructor(private http: HttpClient) {}
 
-  constructor(private http: HttpClient) { }
-
-  getAllBuses(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+  getAllBuses(): Observable<Bus[]> {
+    return this.http.get<Bus[]>(this.apiUrl);
   }
 
-  searchBuses(from: string, to: string, date: string): Observable<any[]> {
-    const params = new HttpParams().set('from', from).set('to', to).set('date', date);
-    return this.http.get<any[]>(`${this.apiUrl}/search`, { params });
+  getBusById(id: number): Observable<Bus> {
+    return this.http.get<Bus>(`${this.apiUrl}/${id}`);
   }
 
-  getBusById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  searchBuses(params: SearchParams): Observable<Bus[]> {
+    const httpParams = new HttpParams()
+      .set('from', params.from)
+      .set('to', params.to)
+      .set('date', params.date);
+    return this.http.get<Bus[]>(`${this.apiUrl}/search`, { params: httpParams });
   }
 
-  createBus(data: any): Observable<any> {
-    return this.http.post(this.apiUrl, data);
+  addBus(bus: Partial<Bus>): Observable<Bus> {
+    return this.http.post<Bus>(this.apiUrl, bus);
   }
 
-  updateBus(id: string, data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, data);
+  updateBus(id: number, bus: Partial<Bus>): Observable<Bus> {
+    return this.http.post<Bus>(`${this.apiUrl}/${id}`, bus);
   }
 
-  deleteBus(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  deleteBus(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

@@ -2,23 +2,27 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { AdminRoutingModule } from './admin-routing.module';
+import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ManageBusesComponent } from './manage-buses/manage-buses.component';
 import { ManageBookingsComponent } from './manage-bookings/manage-bookings.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { ManageUsersComponent } from './manage-users/manage-users.component';
+import { ReportsComponent } from './reports/reports.component';
+import { AdminSettingsComponent } from './settings/settings.component';
 
 @NgModule({
   declarations: [
+    AdminLayoutComponent,
     DashboardComponent,
     ManageBusesComponent,
-    ManageBookingsComponent
+    ManageBookingsComponent,
+    ManageUsersComponent,
+    ReportsComponent,
+    AdminSettingsComponent
   ],
   imports: [
     CommonModule,
-    AdminRoutingModule,
-    ReactiveFormsModule,
-    FormsModule
+    AdminRoutingModule
   ]
 })
 export class AdminModule { }

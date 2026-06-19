@@ -1,25 +1,3 @@
 <div class="manage-bookings">
-  <h2>All Bookings</h2>
-
-  <div *ngIf="bookings.length === 0" class="empty">No bookings yet.</div>
-
-  <div class="table-wrapper" *ngIf="bookings.length > 0">
-    <table class="bookings-table">
-      <thead>
-        <tr>
-          <th>User</th><th>Bus</th><th>Route</th><th>Date</th><th>Fare</th><th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let b of bookings">
-          <td>{{ b.userDetails?.name }}<br><small>{{ b.userDetails?.email }}</small></td>
-          <td>{{ b.busDetails?.busName }}</td>
-          <td>{{ b.busDetails?.from }} → {{ b.busDetails?.to }}</td>
-          <td>{{ b.busDetails?.date }}</td>
-          <td>₹{{ b.totalFare }}</td>
-          <td><span class="status" [class.cancelled]="b.status === 'cancelled'">{{ b.status }}</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <h2>Manage Bookings</h2>
 </div>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
 
@@ -7,23 +7,28 @@ import { AuthService } from 'src/app/core/services/auth.service';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
+  isLoggedIn = false;
+  isAdmin = false;
+  userName = '';
   menuOpen = false;
 
-  constructor(public authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router) {}
+
+  ngOnInit(): void {
+    this.authService.currentUser$.subscribe(user => {
+      this.isLoggedIn = !!user;
+      this.isAdmin = user?.role === 'ADMIN';
+      this.userName = user?.name || '';
+    });
+  }
 
   toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
   }
 
-  closeMenu(): void {
-    this.menuOpen = false;
-  }
-
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
-    this.closeMenu();
   }
-
 }

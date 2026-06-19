@@ -1,63 +1,67 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: 'USER' | 'ADMIN';
+  token: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private apiUrl = 'http://localhost:8080/api/auth';
 
-  private apiUrl = `${environment.apiUrl}/auth`;
-  private currentUserSubject = new BehaviorSubject<any>(this.getStoredUser());
+  private currentUserSubject = new BehaviorSubject<User | null>(
+    JSON.parse(localStorage.getItem('currentUser') || 'null')
+  );
+
   currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) {}
 
-  register(data: { name: string; email: string; password: string; phone: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, data).pipe(
-      tap((res: any) => this.storeSession(res))
+  get currentUser(): User | null {
+    return this.currentUserSubject.value;
+  }
+
+  get token(): string | null {
+    return this.currentUserSubject.value?.token || null;
+  }
+
+  get isLoggedIn(): boolean {
+    return !!this.currentUserSubject.value;
+  }
+
+  get isAdmin(): boolean {
+    return this.currentUserSubject.value?.role === 'ADMIN';
+  }
+
+  register(data: { name: string; email: string; password: string }): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/register`, data).pipe(
+      tap(user => this.setUser(user))
     );
   }
 
-  login(data: { email: string; password: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, data).pipe(
-      tap((res: any) => this.storeSession(res))
+  login(data: { email: string; password: string }): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/login`, data).pipe(
+      tap(user => this.setUser(user))
     );
-  }
-
-  getProfile(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/profile`);
   }
 
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
+    this.router.navigate(['/auth/login']);
   }
 
-  getToken(): string | null {
-    return localStorage.getItem('token');
-  }
-
-  isLoggedIn(): boolean {
-    return !!this.getToken();
-  }
-
-  isAdmin(): boolean {
-    const user = this.getStoredUser();
-    return user?.role === 'admin';
-  }
-
-  private storeSession(res: any): void {
-    localStorage.setItem('token', res.token);
-    localStorage.setItem('user', JSON.stringify(res.user));
-    this.currentUserSubject.next(res.user);
-  }
-
-  private getStoredUser(): any {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+  private setUser(user: User): void {
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    this.currentUserSubject.next(user);
   }
 }
