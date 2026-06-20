@@ -120,20 +120,27 @@ $text-muted: #6d5f7e;
 
 .left-stats {
     display: flex;
+    flex-direction: row;
     gap: 2rem;
     padding-top: 1.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
+    flex-wrap: nowrap;
 
     .stat {
+        display: flex;
+        flex-direction: column;
+
         .stat-value {
             font-size: 1.6rem;
             font-weight: 800;
             color: #fff;
+            line-height: 1;
         }
 
         .stat-label {
             font-size: 0.8rem;
             color: rgba(255, 255, 255, 0.7);
+            margin-top: 4px;
         }
     }
 }
@@ -143,7 +150,8 @@ $text-muted: #6d5f7e;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
+    padding: 3rem 2rem;
+    min-height: 100vh;
 }
 
 .form-wrapper {

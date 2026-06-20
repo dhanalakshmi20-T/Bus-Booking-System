@@ -31,7 +31,7 @@ export class RegisterComponent {
 
   get passwordStrength(): string {
     if (this.password.length === 0) return '';
-    if (this.password.length < 6) return 'week';
+    if (this.password.length < 6) return 'weak';
     if (this.password.length < 10) return 'medium';
     return 'strong';
   }
@@ -41,6 +41,7 @@ export class RegisterComponent {
   }
 
   onRegister(): void {
+    this.errorMessage = '';
     if (!this.name || !this.email || !this.password || !this.confirmPassword) {
       this.errorMessage = 'Please fill in all fields.';
       return;
@@ -52,12 +53,11 @@ export class RegisterComponent {
     }
 
     if (this.password.length < 6) {
-      this.errorMessage = 'Password ,ust be at least 6 characters.';
+      this.errorMessage = 'Password must be at least 6 characters.';
       return;
     }
 
     this.isLoading = true;
-    this.errorMessage = '';
 
     this.authService.register({
       name: this.name,

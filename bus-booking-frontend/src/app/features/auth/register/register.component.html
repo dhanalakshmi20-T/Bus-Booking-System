@@ -122,22 +122,23 @@
                 <span class="input-group-text">
                   <i class="bi bi-lock-fill"></i>
                 </span>
-                <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control" [class.is-valid]="passwordsMatch" [class.is-invalid]="confirmPassword && !passwordsMatch" placeholder="Re-enter your password" [(ngModel)]="confirmPassword" required>
+                <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control"
+                  [class.is-valid]="confirmPassword && password && passwordsMatch"
+                  [class.is-invalid]="confirmPassword && password && !passwordsMatch"
+                  placeholder="Re-enter your password" [(ngModel)]="confirmPassword"
+                  name="confirmPassword" required>
 
                 <button type="button" class="input-group-text toggle-eye" (click)="toggleConfirmPassword()">
                   <i class="bi" [ngClass]="showConfirmPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'"></i>
                 </button>
               </div>
 
-              <div class="match-msg" ?*ngIf="confirmPassword">
+              <div class="match-msg" *ngIf="confirmPassword && password">
                 <span class="text-success" *ngIf="passwordsMatch">
-                  <i class="bi bi-check-circle-fill"></i>
-                  Passwords Match
+                  <i class="bi bi-check-circle-fill"></i> Passwords match
                 </span>
-
                 <span class="text-danger" *ngIf="!passwordsMatch">
-                  <i class="bi bi-exclamation-circle-fill"></i>
-                  Passwords do not match
+                  <i class="bi bi-x-circle-fill"></i> Passwords do not match
                 </span>
               </div>
             </div>
