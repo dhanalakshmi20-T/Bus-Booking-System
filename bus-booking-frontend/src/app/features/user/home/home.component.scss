@@ -1,0 +1,349 @@
+$lavender: #7c4dff;
+$lavender-dark: #4527a0;
+$lavender-light: #ede7f6;
+$lavender-pale: #f5f0ff;
+$text-dark: #2d1b69;
+$text-muted: #6d5f7e;
+
+.welcome-banner {
+    background: linear-gradient(135deg, #4527a0 0%, #7c4dff 60%, #9c6fff 100%);
+    padding: 2rem 0;
+    color: #fff;
+
+    .welcome-date {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.75);
+        margin-bottom: 6px;
+
+        i {
+            margin-right: 6px;
+        }
+    }
+
+    .welcome-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 6px;
+
+        .user-name-highlight {
+            color: #ffca28;
+        }
+    }
+
+    .welcome-subtitle {
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin: 0;
+    }
+
+    .banner-icon {
+        font-size: 5rem;
+        color: rgba(255, 255, 255, 0.15);
+        text-align: right;
+
+        i {
+            font-size: 5rem;
+        }
+    }
+}
+
+.quick-search-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+    border: 1px solid #e8e0f5;
+
+    .card-section-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: $text-dark;
+        margin-bottom: 1.2rem;
+
+        i {
+            color: $lavender;
+            margin-right: 6px;
+        }
+    }
+}
+
+.form-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: $text-dark;
+    margin-bottom: 5px;
+}
+
+.input-group-text {
+    background: $lavender-pale;
+    border-color: #d1c4e9;
+    color: $lavender;
+}
+
+.form-control {
+    border-color: #d1c4e9;
+    font-size: 0.9rem;
+
+    &:focus {
+        border-color: $lavender;
+        box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.12);
+    }
+}
+
+.btn-search {
+    background: $lavender;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+
+    &:hover {
+        background: $lavender-dark;
+        color: #fff;
+        transform: translateY(-1px);
+    }
+}
+
+.section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $text-dark;
+
+    i {
+        color: $lavender;
+        margin-right: 6px;
+    }
+}
+
+.quick-link-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 1.2rem;
+    border-left: 4px solid;
+    box-shadow: 0 2px 12px rgba(124, 77, 255, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(124, 77, 255, 0.15);
+    }
+
+    .link-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        i {
+            font-size: 1.2rem;
+        }
+    }
+
+    .link-label {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: $text-dark;
+        flex: 10;
+    }
+
+    .link-arrow {
+        font-size: 1.3rem;
+    }
+}
+
+.route-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 1.2rem;
+    box-shadow: 0 2px 12px rgba(124, 77, 255, 0.08);
+    border: 1px solid #e8e0f5;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(124, 77, 255, 0.15);
+        border-color: $lavender;
+    }
+
+    .route-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+
+        .route-city {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: $text-dark;
+
+            .from-dot {
+                color: $lavender;
+                font-size: 0.55rem;
+            }
+
+            .to-dot {
+                color: #e53935;
+                font-size: 1rem;
+            }
+        }
+
+        .route-arrow-icon {
+            color: #b39ddb;
+            font-size: 1.2rem;
+        }
+    }
+
+    .route-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .route-duration {
+            font-size: 0.8rem;
+            color: $text-muted;
+
+            i {
+                margin-right: 3px;
+            }
+        }
+
+        .route-fare {
+            font-size: 1rem;
+            font-weight: 800;
+            color: $lavender;
+        }
+    }
+}
+
+.info-card {
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    height: 100%;
+
+    .info-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        i {
+            font-size: 1.4rem;
+        }
+    }
+
+    .info-content {
+        h6 {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        p {
+            font-size: 0.82rem;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+    }
+
+    .info-link {
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: gap 0.2s;
+
+        &:hover {
+            gap: 8px;
+        }
+    }
+
+    &.info-blue {
+        background: #e3f2fd;
+
+        .info-icon {
+            background: #bbdefb;
+
+            i {
+                color: #1565c0;
+            }
+        }
+
+        h6 {
+            color: #1565c0;
+        }
+
+        p {
+            color: #1976d2;
+        }
+
+        .info-link {
+            color: #2e7d32;
+        }
+    }
+
+    &.info-purple {
+        background: $lavender-pale;
+
+        .info-icon {
+            background: $lavender-light;
+
+            i {
+                color: $lavender;
+            }
+        }
+
+        h6 {
+            color: $lavender-dark;
+        }
+
+        p {
+            color: $text-muted;
+        }
+
+        .info-link {
+            color: $lavender;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .welcome-banner {
+        .welcome-title {
+            font-size: 1.4rem;
+        }
+
+        .banner-icon {
+            display: none;
+        }
+    }
+
+    .quick-link-card {
+        padding: 1rem;
+    }
+}

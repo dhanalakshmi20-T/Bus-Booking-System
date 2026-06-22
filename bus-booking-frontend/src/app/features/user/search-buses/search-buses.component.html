@@ -1,3 +1,156 @@
-<div class="search-buses">
-  <h2>Search Buses</h2>
+<div class="search-page">
+  <section class="search-header">
+    <div class="container-fluid px-4 px-lg-5">
+      <h4 class="search-heading">
+        <i class="bi bi-search"></i>
+        Find Your Bus
+      </h4>
+
+      <div class="row g-2 align-items-end">
+        <div class="col-md-3">
+          <label class="form-label">From</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-geo-alt-fill"></i>
+            </span>
+            <input type="text" class="form-control" placeholder="Departure city" [(ngModel)]="from">
+          </div>
+        </div>
+
+        <div class="col-auto d-flex align-items-end pb-1">
+          <button class="btn btn-swap" (click)="swapCities()" title="Swap cities">
+            <i class="bi bi-arrow-left-right"></i>
+          </button>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">To</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-geo-fill"></i>
+            </span>
+            <input type="text" class="form-control" placeholder="Destination city" [(ngModel)]="to">
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Journey Date</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-calendar3"></i>
+            </span>
+            <input type="date" class="form-control" [(ngModel)]="date">
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          <button class="btn btn-search w-100" (click)="searchBuses()">
+            <i class="bi bi-search"></i>
+            Search
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container-fluid px-4 px-lg-5 py-4">
+    <div class="alert alert-danger d-flex align-items-center gap-2" *ngIf="errorMessage">
+      <i class="bi bi-exclamation-circle-fill"></i>
+      {{ errorMessage }}
+    </div>
+
+    <div class="text-center py-5" *ngIf="isLoading">
+      <div class="spinner-border text-lavender mb-3" role="status"></div>
+      <p class="text-muted">Searching for buses...</p>
+    </div>
+    
+    <div *ngIf="!isLoading && searched">
+      <div class="filter-bar mb-4" *ngIf="filteredBuses.length > 0">
+        <div class="filter-left">
+          <span class="result-count">
+            <i class="bi bi-bus-front-fill"></i>
+            {{ filteredBuses.length }} buses found
+          </span>
+          <div class="filter-types">
+            <button *ngFor="let type of busTypes" class="btn btn-filter" [class.active]="filterType === type" (click)="filterType = type; applyFilter()">{{ type }}</button>
+          </div>
+        </div>
+
+        <div class="dort-right">
+          <label class="sort-label">Sort by:</label>
+          <select class="form-select form-select-sm sort-select" [(ngModel)]="sortBy" (change)="applyFilter()">
+            <option value="fare">Lowest Fare</option>
+            <option value="duration">Departure Time</option>
+            <option value="seats">Available Seats</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="bus-list" *ngIf="filteredBuses.length > 0">
+        <div class="bus-card" *ngFor="let bus of filteredBuses">
+          <div class="bus-card-left">
+            <div class="bus-name">{{ bus.busName }}</div>
+            <div class="bus-number">{{ bus.busNumber }}</div>
+            <span class="bus-type-badge"
+              [ngClass]="{
+                'type-ac': bus.busType === 'AC',
+                'type-nonac': bus.busType === 'Non-AC',
+                'type-sleeper': bus.busType === 'Sleeper',
+                'type-semi': bus.busType === 'Semi-Sleeper'
+              }">
+              <i class="bi bi-star-fill"></i>
+              {{ bus.busType }}
+            </span>
+          </div>
+
+          <div class="bus-card-center">
+            <div class="time-block">
+              <div class="time">{{ bus.departureTime }}</div>
+              <div class="city">{{ bus.from }}</div>
+            </div>
+
+            <div class="journey-line">
+              <div class="line-dot"></div>
+              <div class="line-bar"></div>
+              <i class="bi bi-bus-front-fill bus-moving-icon"></i>
+              <div class="line-bar"></div>
+              <div class="line-dot"></div>
+            </div>
+
+            <div class="time-block text-end">
+              <div class="time">{{ bus.arrivalTime }}</div>
+              <div class="city">{{ bus.to }}</div>
+            </div>
+          </div>
+
+          <div class="bus-card-right">
+            <div class="fare">{{ bus.fare | currency: 'INR' : 'symbol' : '1.0-0' }}</div>
+
+            <div class="seats" [ngClass]="bus.availableSeats <= 5 ? 'seats-low' : 'seats-ok'">
+              <i class="bi bi-person-fill"></i>
+              {{ bus.availableSeats }} seats left
+            </div>
+
+            <button class="btn btn-book" [disabled]="bus.availableSeats === 0" (click)="selectBus(bus)">
+              {{ bus.availableSeats === 0 ? 'Sold Out' : 'Select Seats' }}
+              <i class="bi bi-arrow-right" *ngIf="bus.availableSeats > 0"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="no-results text-center py-5" *ngIf="filteredBuses.length === 0">
+        <i class="bi bi-bus-front"></i>
+        <h5>No buses found</h5>
+        <p class="text-muted">Try a different route, date or filter.</p>
+        <button class="btn btn-search mt-2" (click)="filterType = 'ALL'; applyFilter()">Clear Filters</button>
+      </div>
+    </div>
+
+    <div class="empty-state text-center py-5" *ngIf="!isLoading && !searched">
+      <i class="bi bi-search empty-icon"></i>
+      <h5 class="mt-3">Search for your bus</h5>
+      <p class="text-muted">Enter departure city, destination and date to find available buses.</p>
+    </div>
+  </div>
 </div>
