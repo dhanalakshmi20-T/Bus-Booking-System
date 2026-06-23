@@ -76,7 +76,7 @@ export class SearchBusesComponent implements OnInit {
 
   selectBus(bus: Bus): void {
     this.router.navigate(['/seat-selection', bus.id], {
-      queryParams: { date: this.date }
+      queryParams: { date: this.date, from: this.from, to: this.to }
     });
   }
 

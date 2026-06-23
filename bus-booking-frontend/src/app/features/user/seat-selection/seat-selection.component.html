@@ -1,3 +1,388 @@
-<div class="seat-selection">
-  <h2>Seat Selection</h2>
+<div class="seat-page">
+
+  <!-- Loading -->
+  <div class="text-center py-5" *ngIf="isLoading">
+    <div class="spinner-border text-lavender" role="status"></div>
+    <p class="text-muted mt-3">Loading seat layout...</p>
+  </div>
+
+  <div *ngIf="!isLoading && bus">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="container-fluid px-4 px-lg-5">
+        <button class="btn btn-back mb-3" (click)="goBack()">
+          <i class="bi bi-arrow-left"></i> Back to Results
+        </button>
+        <div class="bus-header-info">
+          <div>
+            <h4 class="bus-title">{{ bus.busName }}</h4>
+            <span class="bus-sub">{{ bus.busNumber }} &nbsp;|&nbsp; {{ bus.busType }}</span>
+          </div>
+          <div class="route-badge">
+            <i class="bi bi-geo-alt-fill"></i> {{ bus.from }}
+            <i class="bi bi-arrow-right mx-2"></i> {{ bus.to }}
+            <span class="date-badge ms-3">
+              <i class="bi bi-calendar3"></i> {{ date }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid px-4 px-lg-5 py-4">
+      <div class="row g-4">
+
+        <!-- LEFT: Seat Layout -->
+        <div class="col-lg-7">
+          <div class="seat-layout-card">
+
+            <div class="seat-layout-header">
+              <h6 class="mb-0">
+                <i class="bi bi-grid-3x3-gap-fill"></i> Select Your Seats
+              </h6>
+              <span class="selected-count">
+                {{ selectedSeats.length }} / 6 selected
+              </span>
+            </div>
+
+            <!-- Legend -->
+            <div class="seat-legend">
+              <div class="legend-item">
+                <div class="legend-box available"></div><span>Available</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-box booked"></div><span>Booked</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-box selected"></div><span>Selected</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-box ladies"></div><span>Ladies</span>
+              </div>
+            </div>
+
+            <!-- Bus body -->
+            <div class="bus-body">
+
+              <!-- Driver row -->
+              <div class="driver-row">
+                <div class="steering">
+                  <i class="bi bi-circle-fill"></i>
+                  <span>Driver</span>
+                </div>
+                <div class="bus-door">
+                  <i class="bi bi-box-arrow-in-right"></i>
+                  <span>Entry</span>
+                </div>
+              </div>
+
+              <!-- ══ STANDARD LAYOUT (AC / Non-AC only) ══ -->
+              <div class="standard-layout" *ngIf="isStandardBus">
+                <div class="bus-row" *ngFor="let row of rows; let i = index">
+                  <div class="row-num">{{ i + 1 }}</div>
+                  <div class="seat-pair">
+                    <button class="seat-btn"
+                      *ngFor="let seat of row.slice(0,2)"
+                      [ngClass]="{
+                        'seat-available': seat.status === 'available',
+                        'seat-booked':    seat.status === 'booked',
+                        'seat-selected':  seat.status === 'selected',
+                        'seat-ladies':    seat.status === 'ladies'
+                      }"
+                      [disabled]="seat.status === 'booked'"
+                      (click)="toggleSeat(seat)">
+                      <i class="bi bi-person-fill"></i>
+                      <span>{{ seat.seatNumber }}</span>
+                    </button>
+                  </div>
+                  <div class="aisle-gap"></div>
+                  <div class="seat-pair">
+                    <button class="seat-btn"
+                      *ngFor="let seat of row.slice(2,4)"
+                      [ngClass]="{
+                        'seat-available': seat.status === 'available',
+                        'seat-booked':    seat.status === 'booked',
+                        'seat-selected':  seat.status === 'selected',
+                        'seat-ladies':    seat.status === 'ladies'
+                      }"
+                      [disabled]="seat.status === 'booked'"
+                      (click)="toggleSeat(seat)">
+                      <i class="bi bi-person-fill"></i>
+                      <span>{{ seat.seatNumber }}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ══ SEMI-SLEEPER LAYOUT (mixed: seat + seat + berth per row) ══ -->
+              <div class="semi-sleeper-layout" *ngIf="isSemiSleeperBus">
+
+                <div class="semi-legend-row">
+                  <span class="semi-legend-item seat-legend-item">
+                    <i class="bi bi-person-fill"></i> Regular Seats
+                  </span>
+                  <span class="semi-legend-item berth-legend-item">
+                    <i class="bi bi-moon-stars-fill"></i> Sleeper Berth
+                  </span>
+                </div>
+
+                <div class="semi-mixed-grid">
+                  <div class="semi-row" *ngFor="let row of semiRows; let i = index">
+
+                    <div class="row-num">{{ i + 1 }}</div>
+
+                    <!-- Left: 2 regular seats -->
+                    <div class="seat-pair">
+                      <button class="seat-btn"
+                        *ngFor="let seat of row.slice(0,2)"
+                        [ngClass]="{
+                          'seat-available': seat.status === 'available',
+                          'seat-booked':    seat.status === 'booked',
+                          'seat-selected':  seat.status === 'selected',
+                          'seat-ladies':    seat.status === 'ladies'
+                        }"
+                        [disabled]="seat.status === 'booked'"
+                        (click)="toggleSeat(seat)">
+                        <i class="bi bi-person-fill"></i>
+                        <span>{{ seat.seatNumber }}</span>
+                      </button>
+                    </div>
+
+                    <div class="aisle-gap"></div>
+
+                    <!-- Right: 1 sleeper berth -->
+                    <button class="berth-card upper-berth"
+                      *ngFor="let seat of row.slice(2,3)"
+                      [ngClass]="{
+                        'bk-available': seat.status === 'available',
+                        'bk-booked':    seat.status === 'booked',
+                        'bk-selected':  seat.status === 'selected',
+                        'bk-ladies':    seat.status === 'ladies'
+                      }"
+                      [disabled]="seat.status === 'booked'"
+                      (click)="toggleSeat(seat)">
+                      <div class="berth-pillow upper"></div>
+                      <span class="berth-num">{{ seat.seatNumber }}</span>
+                      <i class="bi bi-moon-stars berth-zzz"></i>
+                    </button>
+
+                  </div>
+                </div>
+
+              </div>
+              <!-- ══ END SEMI-SLEEPER ══ -->
+
+              <!-- ══ SLEEPER LAYOUT (lower + upper side by side per row) ══ -->
+              <div class="sleeper-layout" *ngIf="isSleeperBus">
+
+                <!-- Header labels -->
+                <div class="sleeper-header-row">
+                  <div class="sleeper-col-label lower-col-label">
+                    <i class="bi bi-layers-fill"></i> Lower Berths
+                  </div>
+                  <div class="deck-col-sep"></div>
+                  <div class="sleeper-col-label upper-col-label">
+                    <i class="bi bi-layers"></i> Upper Berths
+                  </div>
+                </div>
+
+                <!-- Combined rows -->
+                <div class="sleeper-combined-grid">
+                  <div class="sleeper-combined-row"
+                    *ngFor="let row of sleeperRows; let i = index">
+
+                    <div class="row-num">{{ i + 1 }}</div>
+
+                    <!-- Lower berths: 2 left + 1 right -->
+                    <div class="berth-section">
+                      <button class="berth-card lower-berth"
+                        *ngFor="let seat of row.lower.slice(0,2)"
+                        [ngClass]="{
+                          'bk-available': seat.status === 'available',
+                          'bk-booked':    seat.status === 'booked',
+                          'bk-selected':  seat.status === 'selected',
+                          'bk-ladies':    seat.status === 'ladies'
+                        }"
+                        [disabled]="seat.status === 'booked'"
+                        (click)="toggleSeat(seat)">
+                        <div class="berth-pillow"></div>
+                        <span class="berth-num">{{ seat.seatNumber }}</span>
+                        <i class="bi bi-moon-stars berth-zzz"></i>
+                      </button>
+                      <div class="berth-aisle">|</div>
+                      <button class="berth-card lower-berth"
+                        *ngFor="let seat of row.lower.slice(2,3)"
+                        [ngClass]="{
+                          'bk-available': seat.status === 'available',
+                          'bk-booked':    seat.status === 'booked',
+                          'bk-selected':  seat.status === 'selected',
+                          'bk-ladies':    seat.status === 'ladies'
+                        }"
+                        [disabled]="seat.status === 'booked'"
+                        (click)="toggleSeat(seat)">
+                        <div class="berth-pillow"></div>
+                        <span class="berth-num">{{ seat.seatNumber }}</span>
+                        <i class="bi bi-moon-stars berth-zzz"></i>
+                      </button>
+                    </div>
+
+                    <!-- Deck separator -->
+                    <div class="deck-col-sep">║</div>
+
+                    <!-- Upper berths: 2 left + 1 right -->
+                    <div class="berth-section">
+                      <button class="berth-card upper-berth"
+                        *ngFor="let seat of row.upper.slice(0,2)"
+                        [ngClass]="{
+                          'bk-available': seat.status === 'available',
+                          'bk-booked':    seat.status === 'booked',
+                          'bk-selected':  seat.status === 'selected',
+                          'bk-ladies':    seat.status === 'ladies'
+                        }"
+                        [disabled]="seat.status === 'booked'"
+                        (click)="toggleSeat(seat)">
+                        <div class="berth-pillow upper"></div>
+                        <span class="berth-num">{{ seat.seatNumber }}</span>
+                        <i class="bi bi-moon-stars berth-zzz"></i>
+                      </button>
+                      <div class="berth-aisle">|</div>
+                      <button class="berth-card upper-berth"
+                        *ngFor="let seat of row.upper.slice(2,3)"
+                        [ngClass]="{
+                          'bk-available': seat.status === 'available',
+                          'bk-booked':    seat.status === 'booked',
+                          'bk-selected':  seat.status === 'selected',
+                          'bk-ladies':    seat.status === 'ladies'
+                        }"
+                        [disabled]="seat.status === 'booked'"
+                        (click)="toggleSeat(seat)">
+                        <div class="berth-pillow upper"></div>
+                        <span class="berth-num">{{ seat.seatNumber }}</span>
+                        <i class="bi bi-moon-stars berth-zzz"></i>
+                      </button>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+              <!-- ══ END SLEEPER ══ -->
+
+            </div><!-- end bus-body -->
+          </div>
+        </div>
+
+        <!-- RIGHT: Booking Summary -->
+        <div class="col-lg-5">
+
+          <!-- Trip Summary -->
+          <div class="summary-card mb-3">
+            <h6 class="summary-title">
+              <i class="bi bi-info-circle-fill"></i> Trip Summary
+            </h6>
+            <div class="trip-times">
+              <div class="trip-time-block">
+                <div class="trip-time">{{ bus.departureTime }}</div>
+                <div class="trip-city">{{ bus.from }}</div>
+              </div>
+              <div class="trip-arrow">
+                <div class="trip-line"></div>
+                <i class="bi bi-bus-front-fill trip-bus-icon"></i>
+                <div class="trip-line"></div>
+              </div>
+              <div class="trip-time-block text-end">
+                <div class="trip-time">{{ bus.arrivalTime }}</div>
+                <div class="trip-city">{{ bus.to }}</div>
+              </div>
+            </div>
+            <div class="fare-per-seat">
+              <i class="bi bi-tag-fill"></i> ₹{{ bus.fare }} per seat
+            </div>
+          </div>
+
+          <!-- Passenger Details -->
+          <div class="summary-card mb-3">
+            <h6 class="summary-title">
+              <i class="bi bi-person-fill"></i> Passenger Details
+            </h6>
+            <div class="mb-3">
+              <label class="form-label">Full Name</label>
+              <input type="text" class="form-control"
+                placeholder="Enter passenger name"
+                [(ngModel)]="passengerName">
+            </div>
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label">Age</label>
+                <input type="number" class="form-control"
+                  placeholder="Age" min="1" max="99"
+                  [(ngModel)]="passengerAge">
+              </div>
+              <div class="col-6">
+                <label class="form-label">Gender</label>
+                <select class="form-select" [(ngModel)]="passengerGender">
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Mobile Number</label>
+              <div class="input-group">
+                <span class="input-group-text">+91</span>
+                <input type="tel" class="form-control"
+                  placeholder="10-digit mobile"
+                  maxlength="10"
+                  [(ngModel)]="mobileNumber">
+              </div>
+            </div>
+          </div>
+
+          <!-- Fare Breakdown -->
+          <div class="summary-card mb-3">
+            <h6 class="summary-title">
+              <i class="bi bi-receipt"></i> Fare Breakdown
+            </h6>
+            <div class="fare-row" *ngFor="let seat of selectedSeats">
+              <span>Seat {{ seat }}</span>
+              <span>₹{{ bus.fare }}</span>
+            </div>
+            <div class="fare-empty" *ngIf="selectedSeats.length === 0">
+              <i class="bi bi-cursor-fill"></i> No seats selected yet
+            </div>
+            <div class="fare-total" *ngIf="selectedSeats.length > 0">
+              <span>Total</span>
+              <span>₹{{ totalFare }}</span>
+            </div>
+          </div>
+
+          <!-- Error -->
+          <div class="alert alert-danger d-flex align-items-center gap-2 mb-3"
+            *ngIf="errorMessage">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            {{ errorMessage }}
+          </div>
+
+          <!-- Confirm -->
+          <button class="btn btn-confirm w-100"
+            [disabled]="selectedSeats.length === 0 || isBooking"
+            (click)="confirmBooking()">
+            <span *ngIf="isBooking">
+              <span class="spinner-border spinner-border-sm me-2"></span>
+              Processing...
+            </span>
+            <span *ngIf="!isBooking">
+              <i class="bi bi-check-circle-fill me-2"></i>
+              Confirm Booking
+              <span *ngIf="selectedSeats.length > 0"> — ₹{{ totalFare }}</span>
+            </span>
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
