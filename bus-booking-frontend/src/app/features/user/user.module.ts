@@ -14,6 +14,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { SettingsComponent } from './settings/settings.component';
 import { LandingComponent } from './landing/landing.component';
+import { BookingSuccessComponent } from './booking-success/booking-success.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { LandingComponent } from './landing/landing.component';
     ProfileComponent,
     NotificationsComponent,
     SettingsComponent,
-    LandingComponent
+    LandingComponent,
+    BookingSuccessComponent
   ],
   imports: [
     CommonModule,

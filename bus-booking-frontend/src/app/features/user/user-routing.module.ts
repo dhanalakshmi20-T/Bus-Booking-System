@@ -10,6 +10,7 @@ import { MyBookingsComponent } from './my-bookings/my-bookings.component';
 import { ProfileComponent } from './profile/profile.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { SettingsComponent } from './settings/settings.component';
+import { BookingSuccessComponent } from './booking-success/booking-success.component';
 
 const routes: Routes = [
   {
@@ -21,6 +22,7 @@ const routes: Routes = [
       { path: 'search-buses', component: SearchBusesComponent, canActivate: [AuthGuard] },
       { path: 'seat-selection/:busId', component: SeatSelectionComponent, canActivate: [AuthGuard] },
       { path: 'my-bookings', component: MyBookingsComponent, canActivate: [AuthGuard] },
+      { path: 'booking-success', component: BookingSuccessComponent, canActivate: [AuthGuard] },
       { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
       { path: 'notifications', component: NotificationsComponent, canActivate: [AuthGuard] },
       { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] }
