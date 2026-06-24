@@ -1,1 +1,124 @@
-<div class="settings"></div>
+<div class="settings-page">
+    <div class="container-fluid px-4 px-lg-5 py-4">
+        <div class="page-title">
+            <h3>Settings</h3>
+            <p>Manage your account preferences and security options.</p>
+        </div>
+
+        <div class="alert alert-success" *ngIf="saveSuccess">Settings updated successfully!</div>
+
+        <div class="alert alert-success" *ngIf="passwordSuccess">Password changed successfully!</div>
+
+        <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="settings-card">
+                    <div class="card-title">
+                        <i class="bi bi-sliders"></i>
+                        Preferences
+                    </div>
+
+                    <div class="setting-row">
+                        <div>
+                            <h6>Email Alerts</h6>
+                            <p>Receive booking updates on your email.</p>
+                        </div>
+
+                        <input type="checkbox" class="form-check-input" [(ngModel)]="settings.emailAlerts">
+                    </div>
+
+                    <div class="setting-row">
+                        <div>
+                            <h6>SMA Alerts</h6>
+                            <p>Get travel reminders and ticket updates by SMS.</p>
+                        </div>
+
+                        <input type="checkbox" class="form-check-input" [(ngModel)]="settings.smsAlerts">
+                    </div>
+
+                    <div class="setting-row">
+                        <div>
+                            <h6>Booking Reminders</h6>
+                            <p>Show reminders before upcoming journeys.</p>
+                        </div>
+
+                        <input type="checkbox" class="form-check-input" [(ngModel)]="settings.bookingReminders">
+                    </div>
+
+                    <div class="setting-row">
+                        <div>
+                            <h6>Promotional Offers</h6>
+                            <p>Receive discounts, offers, and route deals.</p>
+                        </div>
+
+                        <input type="checkbox" class="form-check-input" [(ngModel)]="settings.promoOffers">
+                    </div>
+
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-4">
+                            <label class="form-label">Language</label>
+                            <select class="form-select" [(ngModel)]="settings.language">
+                                <option>English</option>
+                                <option>Hindi</option>
+                                <option>Tamil</option>
+                                <option>Telugu</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Currency</label>
+                            <select class="form-select" [(ngModel)]="settings.currency">
+                                <option>INR</option>
+                                <option>USD</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Theme</label>
+                            <select class="form-select" [(ngModel)]="settings.theme">
+                                <option>Light</option>
+                                <option>Dark</option>
+                                <option>System</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-lavender mt-4" (click)="saveSettings()">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        Save Settings
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="settings-card">
+                    <div class="card-title">
+                        <i class="bi bi-shield-lock-fill"></i>
+                        Change Password
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Current Password</label>
+                        <input type="password" class="form-control" [(ngModel)]="password.current">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">New Password</label>
+                        <input type="password" class="form-control" [(ngModel)]="password.newPassword">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" [(ngModel)]="password.confirmPassword">
+                    </div>
+
+                    <button class="btn btn-lavender w-100" (click)="changePassword()">
+                        <i class="bi bi-key-fill me-2"></i>
+                        Update Password
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
