@@ -1,1 +1,216 @@
-<div class="profile"></div>
+<div class="profile-page">
+    <div class="profile-header">
+        <div class="container-fluid px-4 px-lg-5">
+            <div class="header-inner">
+                <div class="avatar-circle">{{ avatarInitials }}</div>
+
+                <div class="header-info">
+                    <h3 class="profile-name">{{ profile.name || 'Your Name' }}</h3>
+
+                    <div class="profile-email">
+                        <i class="bi bi-envelope-fill me-1"></i>
+                        {{ profile.email }}
+                    </div>
+
+                    <div class="profile-gender-age" *ngIf="profile.gender || age">
+                        <span *ngIf="profile.gender">
+                            <i class="bi bi-gender-ambiguous me-1"></i>
+                            {{ profile.gender | titlecase }}
+                        </span>
+
+                        <span *ngIf="age !== null" class="ms-3">
+                            <i class="bi bi-cake2 me-1"></i>
+                            {{ age }} yrs
+                        </span>
+                    </div>
+                </div>
+
+                <button class="btn btn-edit-profile" (click)="toggleEdit()" *ngIf="!editMode">
+                    <i class="bi bi-pencil-fill me-2"></i>
+                    Edit Profile
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid px-4 px-lg-5 py-4">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="info-card mb-3">
+                    <div class="info-card-title">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        Travel Stats
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-box total">
+                            <div class="stat-num">{{ totalBookings }}</div>
+                            <div class="stat-lbl">Total Trips</div>
+                        </div>
+
+                        <div class="stat-box confirmed">
+                            <div class="stat-num">{{ confirmedBookings }}</div>
+                            <div class="stat-lbl">Confirmed</div>
+                        </div>
+
+                        <div class="stat-box cancelled">
+                            <div class="stat-num">₹{{ totalSpent }}</div>
+                            <div class="stat-lbl">Total Spent</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-title">
+                        <i class="bi bi-grid"></i>
+                        Quick Actions
+                    </div>
+
+                    <div class="quick-links">
+                        <button class="quick-link-btn" (click)="goToMyBookings()">
+                            <i class="bi bi-ticket-perforated-fill"></i>
+                            <span>My Bookings</span>
+                            <i class="bi bi-chevron-right ms-auto"></i>
+                        </button>
+
+                        <button class="quick-link-btn" routerLink="/notifications">
+                            <i class="bi bi-bell-fill"></i>
+                            <span>notifications</span>
+                            <i class="bi bi-chevron-right ms-auto"></i>
+                        </button>
+
+                        <button class="quick-link-btn" routerLink="/settings">
+                            <i class="bi bi-gear-fill"></i>
+                            <span>settings</span>
+                            <i class="bi bi-chevron-right ms-auto"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="alert alert-success d-flex align-items-center gap-2 mb-3" *ngIf="saveSuccess">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Profile updated successfully!
+                </div>
+
+                <div class="alert alert-danger d-flex align-items-center gap-2 mb-3" *ngIf="errorMessage">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    {{ errorMessage }}
+                </div>
+
+                <div class="info-card" *ngIf="!editMode">
+                    <div class="info-card-title">
+                        <i class="bi bi-person-fill"></i>
+                        Personal Information
+                    </div>
+
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Full Name</div>
+                            <div class="detail-value">{{ profile.name || '-' }}</div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">Email Address</div>
+                            <div class="detail-value">{{ profile.email || '-' }}</div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">Mobile Number</div>
+                            <div class="detail-value">{{ profile.mobile ? '+91 ' + profile.mobile : '-' }}</div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">Date of Birth</div>
+                            <div class="detail-value">{{ formattedDob }}</div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">Gender</div>
+                            <div class="detail-value">{{ profile.gender ? (profile.gender | titlecase) : '-' }}</div>
+                        </div>
+
+                        <div class="detail-item fill-width">
+                            <div class="detail-label">Address</div>
+                            <div class="detail-value">{{ profile.address || '-' }}</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <button class="btn btn-lavender" (click)="toggleEdit()">
+                            <i class="bi bi-pencil-fill me-2"></i>
+                            Edit Profile
+                        </button>
+                    </div>
+                </div>
+
+                <div class="info-card" *ngIf="editMode">
+                    <div class="info-card-title">
+                        <i class="bi bi-pencil-square"></i>
+                        Edit Profile
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" placeholder="Enter your full name" [(ngModel)]="profile.name">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" [value]="profile.email" disabled>
+                            <small class="text-muted">Email cannot be changed</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Mobile Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text">+91</span>
+                                <input type="tel" class="form-control" placeholder="10-digit number" maxlength="10" [(ngModel)]="profile.mobile">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="date" class="form-control" [(ngModel)]="profile.dob">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Gender</label>
+                            <select class="form-select" [(ngModel)]="profile.gender">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Address</label>
+                            <textarea class="form-control" rows="2" placeholder="Enter your address" [(ngModel)]="profile.address"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="edit-actions mt-4">
+                        <button class="btn btn-lavender" [disabled]="saving" (click)="saveProfile()">
+                            <span *ngIf="saving">
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                                Saving...
+                            </span>
+
+                            <span *ngIf="!saving">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                Save Changes
+                            </span>
+                        </button>
+
+                        <button class="btn btn-outline-secondary" [disabled]="saving" (click)="cancelEdit()">
+                            <i class="bi bi-x-circle me-1"></i>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
