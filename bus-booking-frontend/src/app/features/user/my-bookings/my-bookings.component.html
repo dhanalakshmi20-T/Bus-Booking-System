@@ -1,3 +1,177 @@
-<div class="my-bookings">
-  <h2>My Bookings</h2>
+<div class="my-bookings-page">
+  <div class="bookings-header">
+    <div class="container-fluid px-4 px-lg-5">
+      <div class="header-top">
+        <div>
+          <h3 class="header-title">
+            <i class="bi bi-ticket-perforated-fill"></i>
+            My Bookings
+          </h3>
+          
+          <p class="header-suv">View and manage all your bus ticket bookings</p>
+        </div>
+
+        <button class="btn btn-new-booking" (click)="searchBuses()">
+          <i class="bi bi-plus-circle-fill me-2"></i>
+          Book New Ticket
+        </button>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-chip confirmed">
+          <i class="bi bi-check-circle-fill"></i>
+          <span>{{ confirmedCount }} Confirmed</span>
+        </div>
+
+        <div class="stat-chip cancelled">
+          <i class="bi bi-x-circle-fill">
+            <span>{{ cancelledCount }} Cancelled</span>
+          </i>
+        </div>
+
+        <div class="stat-chip spent">
+          <i class="bi bi-currency-rupee"></i>
+          <span>₹{{ totalSpent }} Spent</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid px-4 px-lg-5 py-4">
+    <div class="filter-tabs mb-4">
+      <button class="tab-btn" *ngFor="let f of filters" [class.active]="activeFilter === f" (click)="setFilter(f)">
+        {{ f }}
+        <span class="tab-count" *ngIf="f === 'ALL'">{{ allBookings.length }}</span>
+        <span class="tab-count" *ngIf="f === 'CONFIRMED'">{{ confirmedCount }}</span>
+        <span class="tab-count" *ngIf="f === 'CANCELLED'">{{ cancelledCount }}</span>
+      </button>
+    </div>
+
+    <div class="empty-state" *ngIf="allBookings.length === 0">
+      <div class="empty-icon">
+        <i class="bi bi-ticket-perforated"></i>
+      </div>
+
+      <h5>No Bookings Yet</h5>
+
+      <p>You haven't booked any bus tickets. Start your journey today!</p>
+
+      <button class="btn btn-new-booking" (click)="searchBuses()">
+        <i class="bi bi-search me-2"></i>
+        Search Buses
+      </button>
+    </div>
+
+    <div class="empty-state" *ngIf="allBookings.length > 0 && filteredBookings.length === 0">
+      <div class="empty-icon">
+        <i class="bi bi-funnel"></i>
+      </div>
+
+      <h5>No {{ activeFilter | titlecase }} Bookings</h5>
+
+      <p>No bookings found with this status.</p>
+    </div>
+
+    <div class="bookings-list" *ngIf="filteredBookings.length > 0">
+      <div class="booking-card" *ngFor="let booking of filteredBookings" [class.cancelled-card]="booking.status === 'CANCELLED'">
+
+        <div class="card-header-row">
+          <div class="booking-id-block">
+            <span class="booking-label">Booking ID</span>
+            <span class="booking-id">{{ booking.bookingId }}</span>
+          </div>
+
+          <div class="status-badges">
+            <span class="status-badge upcoming" *ngIf="isUpcoming(booking.date) && booking.status === 'CONFIRMED'">
+              <i class="bi bi-lightning-fill"></i>
+              Upcoming
+            </span>
+
+            <span class="status-badge"
+              [class.badge-confirmed]="booking.status === 'CONFIRMED'"
+              [class.badge-cancelled]="booking.status === 'CANCELLED'">
+              <i class="bi bi-check-circle-fill me-1" *ngIf="booking.status === 'CONFIRMED'"></i>
+              <i class="bi bi-check-circle-fill me-1" *ngIf="booking.status === 'CANCELLED'"></i>
+              {{ booking.status }}
+            </span>
+          </div>
+        </div>
+
+        <div class="card-body-grid">
+          <div class="bus-info-col">
+            <div class="bus-name">{{ booking.busName }}</div>
+            <div class="bus-number">{{ booking.busNumber }}</div>
+            <div class="booked-on">
+              <i class="bi bi-clock-history"></i>
+              Booked: {{ formatBookedAt(booking.bookedAt) }}
+            </div>
+          </div>
+
+          <div class="route-col">
+            <div class="route-timeline">
+              <div class="time-block">
+                <div class="journey-time">{{ booking.departureTime }}</div>
+                <div class="journey-city">{{ booking.from }}</div>
+              </div>
+
+              <div class="journey-line">
+                <div class="line-dot"></div>
+                <div class="line-bar"></div>
+                <i class="bi bi-bus-front-fill line-bus"></i>
+                <div class="line-bar"></div>
+                <div class="line-dot"></div>
+              </div>
+
+              <div class="time-block text-end">
+                <div class="journey-time">{{ booking.arrivalTime }}</div>
+                <div class="journey-city">{{ booking.to }}</div>
+              </div>
+            </div>
+
+            <div class="journey-date">
+              <i class="bi bi-calendar3 me-1"></i>
+              {{ formatDate(booking.date) }}
+            </div>
+          </div>
+
+          <div class="seat-fare-col">
+            <div class="seat-chips-row">
+              <span class="seat-chip" *ngFor="let seat of booking.seats">{{ seat }}</span>
+            </div>
+
+            <div class="total-fare">
+              <i class="bi bi-currency-rupee"></i>
+              {{ booking.totalFare }}
+            </div>
+
+            <div class="passenger-info">
+              <i class="bi bi-person-fill me-1"></i>
+              {{ booking.passengerName }}, {{ booking.passengerAge }}
+            </div>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <button class="btn btn-view-ticket" (click)="viewTicket(booking.bookingId)">
+            <i class="bi bi-eye-fill me-1"></i>
+            View Ticket
+          </button>
+
+          <button class="btn btn-cancel-booking"
+            *ngIf="booking.status === 'CONFIRMED' && isUpcoming(booking.date)"
+            [disabled]="cancellingId === booking.bookingId"
+            (click)="cancelBooking(booking.bookingId)">
+            <span *ngIf="cancellingId === booking.bookingId">
+              <span class="spinner-border spinner-border-sm me-1"></span>
+              Cancelling...
+            </span>
+            <span *ngIf="cancellingId !== booking.bookingId">
+              <i class="bi bi-x-circle me-1"></i>
+              Cancel
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

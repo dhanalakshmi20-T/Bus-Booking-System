@@ -1,0 +1,455 @@
+$lavender: #7c4dff;
+$lavender-dark: #4527a0;
+$lavender-light: #ede7f6;
+$lavender-pale: #f5f0ff;
+
+.my-bookings-page {
+    min-height: 100vh;
+    background: #f8f9fa;
+}
+
+.bookings-header {
+    background: linear-gradient(135deg, $lavender-dark, $lavender);
+    color: #fff;
+    padding: 2rem 0 1.5rem;
+
+    .header-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+
+        @media (max-width: 567px) {
+            flex-direction: column;
+        }
+    }
+
+    .header-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+
+    .header-sub {
+        font-size: 0.9rem;
+        opacity: 0.85;
+        margin: 0;
+    }
+}
+
+.btn-new-booking {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1.5px solid rgba(255, 255, 255, 0.5);
+    color: #fff;
+    border-radius: 8px;
+    padding: 0.5rem 1.1rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    transition: background 0.2s;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.35);
+        color: #fff;
+    }
+}
+
+.status-row {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.stat-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+
+    &.confirmed {
+        background: rgba(40, 167, 69, 0.25);
+        color: #d4edda;
+        border: 1px solid rgba(40, 167, 69, 0.4);
+    }
+
+    &.cancelled {
+        background: rgba(220, 53, 69, 0.25);
+        color: #f8d7da;
+        border: 1px solid rgba(220, 53, 69, 0.4);
+    }
+
+    &.spent {
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+}
+
+.filter-tabs {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 1.1rem;
+    border: 1.5px solid #dee2e6;
+    border-radius: 20px;
+    background: #fff;
+    color: #6c757d;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+        border-color: $lavender;
+        color: $lavender;
+    }
+
+    &.active {
+        background: $lavender;
+        border-color: $lavender;
+        color: #fff;
+
+        .tab-count {
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+        }
+    }
+}
+
+.tab-count {
+    background: #e9ecef;
+    color: #6c757d;
+    border-radius: 10px;
+    padding: 0 0.45rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    min-width: 20px;
+    text-align: center;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+
+    .empty-icon {
+        font-size: 4rem;
+        color: #ced4da;
+        margin-bottom: 1rem;
+    }
+
+    h5 {
+        color: #495057;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    p {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-new-booking {
+        background: $lavender;
+        border-color: $lavender;
+        color: #fff;
+
+        &:hover {
+            background: $lavender-dark;
+        }
+    }
+}
+
+.bookings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.booking-card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1.5px solid #e9ecef;
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+
+    &:hover {
+        box-shadow: 0 4px 20px rgba(124, 77, 255, 0.12);
+        transform: translateY(-2px);
+    }
+
+    &.cancelled-card {
+        border-color: #f5c6cb;
+        background: #fffafb;
+        opacity: 0.85;
+
+        &:hover {
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.1);
+        }
+    }
+}
+
+.card-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+    background: $lavender-pale;
+    border-bottom: 1px solid #ede7f6;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.booking-id-block {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.booking-label {
+    font-size: 0.75rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.booking-id {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: $lavender-dark;
+    font-family: monospace;
+    letter-spacing: 0.5px;
+}
+
+.status-badges {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+
+    &.upcoming {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffc107;
+    }
+
+    &.badge-confirmed {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    &.badge-cancelled {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+}
+
+.card-body-grid {
+    display: grid;
+    grid-template-columns: 200px 1fr 180px;
+    gap: 1rem;
+    padding: 1.25rem;
+    align-items: center;
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.bus-info-col {
+    .bus-name {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #212529;
+        margin-bottom: 0.2rem;
+    }
+
+    .bus-number {
+        font-size: 0.8rem;
+        color: $lavender;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+    }
+
+    .booked-on {
+        font-size: 0.75rem;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+}
+
+.route-col {
+    padding: 0 1rem;
+    border-left: 1px solid #f0f0f0;
+    border-right: 1px solid #f0f0f0;
+
+    @media (max-width: 768x) {
+        border: none;
+        padding: 0;
+    }
+}
+
+.route-timeline {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.time-block {
+    min-width: 70px;
+
+    .journey-time {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #212529;
+    }
+
+    .journey-city {
+        font-size: 0.8rem;
+        color: #6c757d;
+        font-weight: 500;
+    }
+}
+
+.journey-line {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: $lavender;
+
+    .line-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: $lavender;
+        flex-shrink: 0;
+    }
+
+    .line-bar {
+        flex: 1;
+        height: 2px;
+        background: linear-gradient(to right, $lavender, $lavender-dark);
+    }
+
+    .line-bus {
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+}
+
+.journey-date {
+    font-size: 0.8rem;
+    color: #495057;
+    font-weight: 600;
+    text-align: center;
+}
+
+.seat-fare-col {
+    text-align: right;
+
+    @media (max-width: 768px) {
+        text-align: left;
+    }
+}
+
+.seat-chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    justify-content: flex-end;
+    margin-bottom: 0.5rem;
+
+    @media (max-width: 768px) {
+        justify-content: flex-start;
+    }
+}
+
+.seat-chip {
+    background: $lavender-light;
+    color: $lavender-dark;
+    border: 1px solid #d1c4e9;
+    border-radius: 6px;
+    padding: 0.15rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.total-fare {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: $lavender-dark;
+    margin-bottom: 0.2rem;
+}
+
+.passenger-info {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.card-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    background: #fafafa;
+    border-top: 1px solid #f0f0f0;
+}
+
+.btn-view-ticket {
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    border: 1.5px solid $lavender;
+    color: $lavender;
+    background: transparent;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+
+    &:hover {
+        background: $lavender;
+        color: #fff;
+    }
+}
+
+.btn-cancel-booking {
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    border: 1.5px solid #dc3545;
+    color: #dc3545;
+    background: transparent;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+        background: #dc3545;
+        color: #fff;
+    }
+
+    &:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+    }
+}
