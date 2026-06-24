@@ -58,8 +58,14 @@ export class HomeComponent implements OnInit {
   }
 
   searchBuses(from: string, to: string): void {
+    const today = new Date().toISOString().split('T')[0];
+
     this.router.navigate(['/search-buses'], {
-      queryParams: { from, to }
+      queryParams: {
+        from: from.trim(),
+        to: to.trim(),
+        date: today
+      }
     });
   }
 

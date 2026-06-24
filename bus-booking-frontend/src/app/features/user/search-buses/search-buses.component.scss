@@ -213,7 +213,7 @@ $lavender-pale: #f5f0ff;
         color: #0d47a1;
     }
 
-    &.type.nonac {
+    &.type-nonac {
         background: #f3e5f5;
         color: #6a1b9a;
     }
@@ -238,7 +238,7 @@ $lavender-pale: #f5f0ff;
 .time-block {
     min-width: 72px;
 
-    time {
+    .time {
         font-size: 1.1rem;
         font-weight: 700;
         color: #2d2055;

@@ -41,18 +41,24 @@ export class RegisterComponent {
   }
 
   onRegister(): void {
+    const name = this.name.trim();
+    const email = this.email.trim().toLowerCase();
+    const password = this.password.trim();
+    const confirmPassword = this.confirmPassword.trim();
+
     this.errorMessage = '';
-    if (!this.name || !this.email || !this.password || !this.confirmPassword) {
+
+    if (!name || !email || !password || !confirmPassword) {
       this.errorMessage = 'Please fill in all fields.';
       return;
     }
 
-    if (this.password !== this.confirmPassword) {
+    if (password !== confirmPassword) {
       this.errorMessage = 'Passwords do not match.';
       return;
     }
 
-    if (this.password.length < 6) {
+    if (password.length < 6) {
       this.errorMessage = 'Password must be at least 6 characters.';
       return;
     }
@@ -60,14 +66,15 @@ export class RegisterComponent {
     this.isLoading = true;
 
     this.authService.register({
-      name: this.name,
-      email: this.email,
-      password: this.password
+      name,
+      email,
+      password
     }).subscribe({
       next: () => {
         this.isLoading = false;
         this.router.navigate(['/home']);
       },
+
       error: (err) => {
         this.isLoading = false;
         this.errorMessage = err.error?.message || 'Registration failed. Please try again.';

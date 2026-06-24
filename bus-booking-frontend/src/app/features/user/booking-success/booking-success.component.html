@@ -39,7 +39,7 @@
                         <div class="ticket-header">
                             <div>
                                 <div class="ticket-bus-name">{{ booking.busName }}</div>
-                                <div class="ticket-bus-num">{{ booking. busNumber }}</div>
+                                <div class="ticket-bus-num">{{ booking.busNumber }}</div>
                             </div>
 
                             <span class="status-badge">
@@ -76,7 +76,7 @@
                         <div class="tear-line">
                             <div class="tear-circle left"></div>
                             <div class="tear-dashes"></div>
-                            <div class="tear-circle-right"></div>
+                            <div class="tear-circle right"></div>
                         </div>
 
                         <div class="ticket-body">
@@ -127,14 +127,15 @@
                                 <div class="col-sm-6">
                                     <div class="ticket-info-block">
                                         <div class="info-label">
-                                            <i class="bi bi-person-fill"></i>Mobile
+                                            <i class="bi bi-telephone-fill"></i>
+                                            Mobile
                                         </div>
 
                                         <div class="info-value">+91 {{ booking.mobileNumber }}</div>
                                     </div>
                                 </div>
 
-                                <div class="col012">
+                                <div class="col-12">
                                     <div class="ticket-info-block booked-at-block">
                                         <i class="bi bi-clock-fill"></i>
                                         Booked on {{ bookedAtFormatted }}

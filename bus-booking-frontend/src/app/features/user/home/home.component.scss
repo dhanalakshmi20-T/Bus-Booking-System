@@ -303,7 +303,7 @@ $text-muted: #6d5f7e;
         }
 
         .info-link {
-            color: #2e7d32;
+            color: #1565c0;
         }
     }
 
@@ -328,6 +328,30 @@ $text-muted: #6d5f7e;
 
         .info-link {
             color: $lavender;
+        }
+    }
+
+    &.info-green {
+        background: #e8f5e9;
+
+        .info-icon {
+            background: #c8e6c9;
+
+            i {
+                color: #2e7d32;
+            }
+        }
+
+        h6 {
+            color: #1b5e20;
+        }
+
+        p {
+            color: #2e7d32;
+        }
+
+        .info-link {
+            color: #1b5e20;
         }
     }
 }

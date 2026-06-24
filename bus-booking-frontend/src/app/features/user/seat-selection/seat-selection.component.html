@@ -181,7 +181,7 @@
                   <div class="sleeper-col-label lower-col-label">
                     <i class="bi bi-layers-fill"></i> Lower Berths
                   </div>
-                  <div class="deck-col-sep"></div>
+                  <div class="deck-col-sep">|</div>
                   <div class="sleeper-col-label upper-col-label">
                     <i class="bi bi-layers"></i> Upper Berths
                   </div>
@@ -297,7 +297,8 @@
               </div>
             </div>
             <div class="fare-per-seat">
-              <i class="bi bi-tag-fill"></i> ₹{{ bus.fare }} per seat
+              <i class="bi bi-tag-fill"></i>
+              ₹{{ bus.fare }} per seat
             </div>
           </div>
 
@@ -376,7 +377,7 @@
             <span *ngIf="!isBooking">
               <i class="bi bi-check-circle-fill me-2"></i>
               Confirm Booking
-              <span *ngIf="selectedSeats.length > 0"> — ₹{{ totalFare }}</span>
+              <span *ngIf="selectedSeats.length > 0"> - ₹{{ totalFare }}</span>
             </span>
           </button>
 

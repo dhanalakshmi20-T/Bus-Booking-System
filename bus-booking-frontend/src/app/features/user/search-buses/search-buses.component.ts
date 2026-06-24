@@ -96,7 +96,7 @@ export class SearchBusesComponent implements OnInit {
       },
 
       {
-        id: 2, busName: 'Sri Murugan Travels', busNumber: 'TN02CD25678',
+        id: 2, busName: 'Sri Murugan Travels', busNumber: 'TN02CD5678',
         busType: 'Non-AC', from: this.from, to: this.to,
         departureTime: '08:30 AM', arrivalTime: '02:00 PM',
         totalSeats: 45, availableSeats: 30, fare: 220, status: 'ACTIVE'

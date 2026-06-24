@@ -82,8 +82,7 @@ $text-muted: #6d5f7e;
         color: $text-dark;
     }
 
-    .input-group-text {
-        background: $lavender-pale;
+    .form-control {
         border-color: #d1c4e9;
         font-size: 0.9rem;
 
@@ -91,6 +90,12 @@ $text-muted: #6d5f7e;
             border-color: $lavender;
             box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.12);
         }
+    }
+
+    .input-group-text {
+        background: $lavender-pale;
+        border-color: #d1c4e9;
+        font-size: 0.9rem;
     }
 
     .text-lavender {

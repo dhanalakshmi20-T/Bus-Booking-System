@@ -335,6 +335,7 @@ $lavender-pale: #f5f0ff;
 
     &:hover {
         background: $lavender-dark;
+        border-color: $lavender-dark;
         color: $lavender-dark;
     }
 }
@@ -381,6 +382,15 @@ $lavender-pale: #f5f0ff;
             color: #1565c0;
         }
     }
+
+    &.purple {
+        background: #f3e8ff;
+        color: #581c87;
+
+        i {
+            color: #7e22ce;
+        }
+    }
 }
 
 @media print {
@@ -417,7 +427,11 @@ $lavender-pale: #f5f0ff;
         text-align: center;
     }
 
-    .route-point, .route-time {
-        font-size: 1.1rem;
+    .route-point {
+        min-width: 64px;
+
+        .route-time {
+            font-size: 1.1rem;
+        }
     }
 }

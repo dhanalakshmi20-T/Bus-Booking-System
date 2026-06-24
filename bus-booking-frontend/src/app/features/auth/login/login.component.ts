@@ -22,7 +22,10 @@ export class LoginComponent {
   }
 
   onLogin(): void {
-    if (!this.email || !this.password) {
+    const email = this.email.trim();
+    const password = this.password.trim();
+
+    if (!email || !password) {
       this.errorMessage = 'Please enter your email and password.';
       return;
     }
@@ -30,21 +33,20 @@ export class LoginComponent {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.authService.login({ email: this.email, password: this.password })
-      .subscribe({
-        next: (user) => {
-          this.isLoading = false;
-          if (user.role === 'ADMIN') {
-            this.router.navigate(['/admin/dashboard']);
-          }
-          else {
-            this.router.navigate(['/home']);
-          }
-        },
-        error: (err) => {
-          this.isLoading = false;
-          this.errorMessage = err.error?.message || 'Invalid email or password.';
+    this.authService.login({ email, password }).subscribe({
+      next: (user) => {
+        this.isLoading = false;
+        if (user.role === 'ADMIN') {
+          this.router.navigate(['/admin/dashboard']);
         }
-      });
+        else {
+          this.router.navigate(['/home']);
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.errorMessage = err.error?.message || 'Invalid email or password.';
+      }
+    });
   }
 }

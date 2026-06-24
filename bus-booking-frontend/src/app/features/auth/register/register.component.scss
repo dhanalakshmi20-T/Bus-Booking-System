@@ -1,5 +1,5 @@
 $lavender: #7c4dff;
-$lavender-dark: #4537a0;
+$lavender-dark: #4527a0;
 $lavender-light: #ede7f6;
 $lavender-pale: #f5f0ff;
 $text-dark: #2d1b69;
@@ -320,7 +320,7 @@ $text-muted: #6d5f7e;
     &:hover:not(:disabled) {
         background: $lavender-dark;
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(229, 57, 53, 0.35);
+        box-shadow: 0 6px 20px rgba(124, 77, 255, 0.35);
         color: #fff;
     }
 

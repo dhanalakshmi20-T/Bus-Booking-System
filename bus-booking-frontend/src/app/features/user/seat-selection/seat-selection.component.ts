@@ -77,8 +77,6 @@ export class SeatSelectionComponent implements OnInit {
     return buses[this.busId] || buses[1];
   }
 
-  // ── Bus type getters ─────────────────────────────
-
   get isSleeperBus(): boolean {
     return this.bus?.busType === 'Sleeper';
   }
@@ -91,15 +89,12 @@ export class SeatSelectionComponent implements OnInit {
     return !this.isSleeperBus && !this.isSemiSleeperBus;
   }
 
-  // ── Seat generation ──────────────────────────────
-
   private generateSeats(): SeatLayout[] {
     if (this.isSleeperBus)     return this.generateSleeperSeats();
     if (this.isSemiSleeperBus) return this.generateSemiSleeperSeats();
     return this.generateStandardSeats();
   }
 
-  // AC / Non-AC: 2+2, 10 rows = 40 seats
   private generateStandardSeats(): SeatLayout[] {
     const seats: SeatLayout[] = [];
     const booked = [3, 7, 12, 16, 21, 25, 30, 34];
@@ -115,7 +110,6 @@ export class SeatSelectionComponent implements OnInit {
     return seats;
   }
 
-  // Semi-Sleeper: each row has 2 regular seats (left) + 1 sleeper berth (right)
   private generateSemiSleeperSeats(): SeatLayout[] {
     const seats: SeatLayout[] = [];
     const bookedSeats  = [2, 5, 9, 14, 18];
@@ -126,7 +120,6 @@ export class SeatSelectionComponent implements OnInit {
     let berthNum = 1;
 
     for (let row = 0; row < 10; row++) {
-      // Left: 2 regular seats
       for (let col = 0; col < 2; col++) {
         let status: SeatLayout['status'] = 'available';
         if (bookedSeats.includes(seatNum))  status = 'booked';
@@ -134,7 +127,7 @@ export class SeatSelectionComponent implements OnInit {
         seats.push({ seatNumber: `S${seatNum}`, status, type: col === 0 ? 'window' : 'aisle', section: 'seat' });
         seatNum++;
       }
-      // Right: 1 sleeper berth
+      
       let status: SeatLayout['status'] = 'available';
       if (bookedBerths.includes(berthNum)) status = 'booked';
       seats.push({ seatNumber: `B${berthNum}`, status, type: 'window', section: 'berth' });
@@ -144,7 +137,6 @@ export class SeatSelectionComponent implements OnInit {
     return seats;
   }
 
-  // Sleeper: 2+1, 6 rows lower + 6 rows upper = 18+18 berths
   private generateSleeperSeats(): SeatLayout[] {
     const seats: SeatLayout[] = [];
     const bookedLower = [2, 5, 9, 13];
@@ -171,16 +163,15 @@ export class SeatSelectionComponent implements OnInit {
     return seats;
   }
 
-  // ── Row getters ──────────────────────────────────
-
-  // Standard seats OR semi-sleeper lower seats (2+2)
   get rows(): SeatLayout[][] {
     let src: SeatLayout[];
     if (this.isSleeperBus) {
       src = this.seats.filter(s => s.deck === 'lower');
-    } else if (this.isSemiSleeperBus) {
+    }
+    else if (this.isSemiSleeperBus) {
       src = this.seats.filter(s => s.section === 'seat');
-    } else {
+    }
+    else {
       src = this.seats;
     }
     const rows: SeatLayout[][] = [];
@@ -190,7 +181,6 @@ export class SeatSelectionComponent implements OnInit {
     return rows;
   }
 
-  // Sleeper upper berths (2+1)
   get upperRows(): SeatLayout[][] {
     const src = this.seats.filter(s => s.deck === 'upper' && this.isSleeperBus);
     const rows: SeatLayout[][] = [];
@@ -200,7 +190,6 @@ export class SeatSelectionComponent implements OnInit {
     return rows;
   }
 
-  // Semi-sleeper: combined rows [seat, seat, berth] per row
   get semiRows(): SeatLayout[][] {
     const rows: SeatLayout[][] = [];
     for (let i = 0; i < this.seats.length; i += 3) {
@@ -209,7 +198,6 @@ export class SeatSelectionComponent implements OnInit {
     return rows;
   }
 
-  // Sleeper: each row pairs lower berths + upper berths side by side
   get sleeperRows(): { lower: SeatLayout[], upper: SeatLayout[] }[] {
     const lower = this.seats.filter(s => s.deck === 'lower');
     const upper = this.seats.filter(s => s.deck === 'upper');
@@ -228,23 +216,39 @@ export class SeatSelectionComponent implements OnInit {
     return this.selectedSeats.length * (this.bus?.fare || 0);
   }
 
-  // ── Actions ──────────────────────────────────────
-
   toggleSeat(seat: SeatLayout): void {
     if (seat.status === 'booked') return;
+
     if (seat.status === 'selected') {
-      const ladiesSeats = ['S1','S2','S5','S6','S1','S4','S5','L1','L2'];
-      seat.status = ladiesSeats.includes(seat.seatNumber) ? 'ladies' : 'available';
+      seat.status = this.getOriginalSeatStatus(seat);
       this.selectedSeats = this.selectedSeats.filter(s => s !== seat.seatNumber);
-    } else {
-      if (this.selectedSeats.length >= 6) {
-        this.errorMessage = 'You can select a maximum of 6 seats.';
-        return;
-      }
-      seat.status = 'selected';
-      this.selectedSeats.push(seat.seatNumber);
-      this.errorMessage = '';
+      return;
     }
+
+    if (this.selectedSeats.length >= 6) {
+      this.errorMessage = 'You can select a maximum of 6 seats.';
+      return;
+    }
+
+    seat.status = 'selected';
+    this.selectedSeats.push(seat.seatNumber);
+    this.errorMessage = '';
+  }
+
+  private getOriginalSeatStatus(seat: SeatLayout): SeatLayout['status'] {
+    const ladiesStandardSeats = ['S1', 'S2', 'S5', 'S6'];
+    const ladiesSemiSeats = ['S1', 'S3'];
+    const ladiesSleeperBerths = ['L1', 'L2'];
+
+    if (
+      ladiesStandardSeats.includes(seat.seatNumber) ||
+      ladiesSemiSeats.includes(seat.seatNumber) ||
+      ladiesSleeperBerths.includes(seat.seatNumber)
+    ) {
+      return 'ladies';
+    }
+
+    return 'available';
   }
 
   confirmBooking(): void {
@@ -252,10 +256,12 @@ export class SeatSelectionComponent implements OnInit {
     if (this.selectedSeats.length === 0) { this.errorMessage = 'Please select at least one seat.'; return; }
     if (!this.passengerName.trim()) { this.errorMessage = 'Please enter passenger name.'; return; }
     if (!this.passengerAge || Number(this.passengerAge) < 1 || Number(this.passengerAge) > 99) {
-      this.errorMessage = 'Please enter a valid age (1–99).'; return;
+      this.errorMessage = 'Please enter a valid age (1–99).';
+      return;
     }
     if (!this.mobileNumber.trim() || this.mobileNumber.length !== 10) {
-      this.errorMessage = 'Please enter a valid 10-digit mobile number.'; return;
+      this.errorMessage = 'Please enter a valid 10-digit mobile number.';
+      return;
     }
 
     this.isBooking = true;

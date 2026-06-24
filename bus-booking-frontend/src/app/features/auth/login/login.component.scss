@@ -188,6 +188,17 @@ $text-muted: #6d5f7e;
         color: $text-muted;
         margin-bottom: 1.8rem;
     }
+
+    .admin-hint {
+        background: $lavender-pale;
+        color: $lavender-dark;
+        border: 1px solid #d1c4e9;
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
 }
 
 .form-label {

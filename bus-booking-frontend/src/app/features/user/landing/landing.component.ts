@@ -69,11 +69,17 @@ export class LandingComponent {
   constructor(private router: Router) {}
 
   onSearch(): void {
-    if (this.from && this.to && this.date) {
-      this.router.navigate(['/search-buses'], {
-        queryParams: { from: this.from, to: this.to, date: this.date }
-      });
+    if (!this.from.trim() || !this.to.trim() || !this.date) {
+      return;
     }
+
+    this.router.navigate(['/search-buses'], {
+      queryParams: {
+        from: this.from.trim(),
+        to: this.to.trim(),
+        date: this.date
+      }
+    });
   }
 
 }

@@ -11,7 +11,7 @@
           <h2 class="left-title">Your Journey Begins Here</h2>
 
           <p class="left-subtitle">
-            Book bud tickets across 50+ cities in India.
+            Book bus tickets across 50+ cities in India.
             Fast, safe and affordable travel at your fingertips.
           </p>
 
@@ -65,6 +65,7 @@
 
           <h3 class="form-title">Welcome Back!</h3>
           <p class="form-subtitle">Sign in to your account to continue</p>
+          <p class="admin-hint">Admin demo: admin@busbook.com / admin123</p>
 
           <div class="alert alert-danger d-flex align-items-center gap-2" *ngIf="errorMessage">
             <i class="bi bi-exclamation-circle-fill"></i>
@@ -85,7 +86,7 @@
             <div class="mb-3">
               <div class="d-flex justify-content-between">
                 <label class="form-label">Password</label>
-                <a href="#" class="forgot-link">Forgot password</a>
+                <a routerLink="/auth/register" class="forgot-link">Forgot password</a>
               </div>
 
               <div class="input-group">
