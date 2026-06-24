@@ -55,7 +55,7 @@ $lavender-pale: #f5f0ff;
     }
 }
 
-.status-row {
+.stats-row {
     display: flex;
     gap: 0.75rem;
     flex-wrap: wrap;
@@ -303,7 +303,7 @@ $lavender-pale: #f5f0ff;
     border-left: 1px solid #f0f0f0;
     border-right: 1px solid #f0f0f0;
 
-    @media (max-width: 768x) {
+    @media (max-width: 768Px) {
         border: none;
         padding: 0;
     }

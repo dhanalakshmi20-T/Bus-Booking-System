@@ -1,1 +1,57 @@
-<div class="notifications"></div>
+<div class="notifications-page">
+    <div class="container-fluid px-4 px-lg-5 py-4">
+        <div class="page-header">
+            <div>
+                <h3>Notifications</h3>
+                <p *ngIf="unreadCount > 0">{{ unreadCount }} unread notification{{ unreadCount > 1 ? 's' : '' }}</p>
+                <p *ngIf="unreadCount === 0">You are all caught up.</p>
+            </div>
+
+            <div class="header-actions" *ngIf="notifications.length > 0">
+                <button class="btn btn-outline-secondary" (click)="markAllAsRead()">
+                    <i class="bi bi-check2-all me-1"></i>
+                    Mark All Read
+                </button>
+
+                <button class="btn btn-outline-danger" (click)="clearAll()">
+                    <i class="bi bi-trash-fill me-1"></i>
+                    Clear All
+                </button>
+            </div>
+        </div>
+
+        <div class="notifications-card" *ngIf="notifications.length > 0">
+            <div class="notification-item" *ngFor="let notification of notifications" [class.unread]="!notification.read">
+                <div class="notification-icon" [ngClass]="notification.type">
+                    <i class="bi" [ngClass]="getIcon(notification.type)"></i>
+                </div>
+
+                <div class="notification-content">
+                    <div class="notification-top">
+                        <h6>{{ notification.title }}</h6>
+                        <span>{{ notification.time }}</span>
+                    </div>
+
+                    <p>{{ notification.message }}</p>
+
+                    <div class="notification-actions">
+                        <button class="link-btn" *ngIf="!notification.read" (click)="markAsRead(notification)">Mark as read</button>
+
+                        <button class="link-btn danger" (click)="deleteNotification(notification.id)">Delete</button>
+                    </div>
+                </div>
+
+                <span class="unread-dot" *ngIf="!notification.read"></span>
+            </div>
+        </div>
+
+        <div class="empty-state" *ngIf="notifications.length === 0">
+            <div class="empty-icon">
+                <i class="bi bi-bell-slash-fill"></i>
+            </div>
+
+            <h5>No notifications</h5>
+            <p>Ne booking updates, reminders, and offers will appear here.</p>
+        </div>
+    </div>
+</div>

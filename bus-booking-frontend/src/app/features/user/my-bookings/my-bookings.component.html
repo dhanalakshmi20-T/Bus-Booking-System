@@ -8,7 +8,7 @@
             My Bookings
           </h3>
           
-          <p class="header-suv">View and manage all your bus ticket bookings</p>
+          <p class="header-sub">View and manage all your bus ticket bookings</p>
         </div>
 
         <button class="btn btn-new-booking" (click)="searchBuses()">
@@ -24,9 +24,8 @@
         </div>
 
         <div class="stat-chip cancelled">
-          <i class="bi bi-x-circle-fill">
-            <span>{{ cancelledCount }} Cancelled</span>
-          </i>
+          <i class="bi bi-x-circle-fill"></i>
+          <span>{{ cancelledCount }} Cancelled</span>
         </div>
 
         <div class="stat-chip spent">
@@ -91,7 +90,7 @@
               [class.badge-confirmed]="booking.status === 'CONFIRMED'"
               [class.badge-cancelled]="booking.status === 'CANCELLED'">
               <i class="bi bi-check-circle-fill me-1" *ngIf="booking.status === 'CONFIRMED'"></i>
-              <i class="bi bi-check-circle-fill me-1" *ngIf="booking.status === 'CANCELLED'"></i>
+              <i class="bi bi-x-circle-fill me-1" *ngIf="booking.status === 'CANCELLED'"></i>
               {{ booking.status }}
             </span>
           </div>
