@@ -84,6 +84,10 @@ export class SearchBusesComponent implements OnInit {
     const temp = this.from;
     this.from = this.to;
     this.to = temp;
+
+    if (this.searched && this.from && this.to && this.date) {
+      this.searchBuses();
+    }
   }
 
   private getMockBuses(): Bus[] {

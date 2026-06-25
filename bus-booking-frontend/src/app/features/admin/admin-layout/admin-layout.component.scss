@@ -1,0 +1,158 @@
+$lavender: #7c4dff;
+$lavender-dark: #4527a0;
+$lavender-pale: #f5f0ff;
+
+.admin-layout {
+    min-height: 100vh;
+    display: flex;
+    background: #f5f7fb;
+}
+
+.admin-sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: $lavender-dark;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 24px;
+
+    i {
+        color: $lavender;
+        font-size: 26px;
+    }
+}
+
+.sidebar-nav {
+    display: grid;
+    gap: 8px;
+    flex: 1;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 12px;
+    border-radius: 8px;
+    color: #4b5563;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.2s none;
+
+    i {
+        color: #7c4dff;
+        font-size: 17px;
+    }
+
+    &:hover,
+    &.active {
+        background: $lavender-pale;
+        color: $lavender-dark;
+    }
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    border: 0;
+    background: #fee2e2;
+    color: #b91c1c;
+    border-radius: 8px;
+    padding: 11px 12px;
+    font-weight: 700;
+
+    &:hover {
+        background: #fecaca;
+    }
+}
+
+.admin-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-topbar {
+    height: 72px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 24px;
+
+    h5 {
+        margin: 0;
+        color: #111827;
+        font-weight: 800;
+    }
+
+    span {
+        color: #6b7280;
+        font-size: 13px;
+    }
+}
+
+.menu-btn {
+    display: none;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    border-radius: 8px;
+    color: $lavender;
+    font-size: 22px;
+}
+
+.admin-content {
+    padding: 24px;
+}
+
+.sidebar-backdrop {
+    display: none;
+}
+
+@media (max-width: 991px) {
+    .admin-sidebar {
+        position: fixed;
+        left: -280px;
+        top: 0;
+        z-index: 1040;
+        transition: left 0.2s ease;
+
+        &.open {
+            left: 0;
+        }
+    }
+
+    .menu-btn {
+        display: inline-grid;
+        place-items: center;
+    }
+
+    .sidebar-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.35);
+        z-index: 1030;
+    }
+
+    .admin-content {
+        padding: 18px;
+    }
+}

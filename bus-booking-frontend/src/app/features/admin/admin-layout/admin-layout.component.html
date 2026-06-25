@@ -1,3 +1,39 @@
 <div class="admin-layout">
-  <router-outlet></router-outlet>
+  <aside class="admin-sidebar" [class.open]="sidebarOpen">
+    <div class="sidebar-brand">
+      <i class="bi bi-bus-front-fill"></i>
+      <span>BusBook Admin</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a [routerLink]="item.route" *ngFor="let item of navItems" routerLinkActive="active" class="sidebar-link" (click)="closeSidebar()">
+        <i class="bi" [ngClass]="item.icon"></i>
+        <span>{{ item.label }}</span>
+      </a>
+    </nav>
+
+    <button class="logout-btn" (click)="logout()">
+      <i class="bi  bi-box-arrow-right"></i>
+      <span>Logout</span>
+    </button>
+  </aside>
+
+  <div class="sidebar-backdrop" *ngIf="sidebarOpen" (click)="closeSidebar()"></div>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <button class="menu-btn" (click)="toggleSidebar()">
+        <i class="bi bi-list"></i>
+      </button>
+
+      <div>
+        <h5>Admin Panel</h5>
+        <span>Manage buses, users, bookings and reports</span>
+      </div>
+    </header>
+
+    <section class="admin-content">
+      <router-outlet></router-outlet>
+    </section>
+  </main>
 </div>
