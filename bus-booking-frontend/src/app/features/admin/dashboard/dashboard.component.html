@@ -1,3 +1,65 @@
-<div class="dashboard">
-  <h2>Dashboard</h2>
+<div class="dashboard-page">
+  <div class="page-title">
+    <h3>Dashboard</h3>
+    <p>Overview of users, bookings and platform activity.</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card" *ngFor="let stat of stats">
+      <div class="stat-icon" [style.background]="stat.color + '1a'" [style.color]="stat.color">
+        <i class="bi" [ngClass]="stat.icon"></i>
+      </div>
+      
+      <div>
+        <div class="stat-value">{{ stat.value }}</div>
+        <div class="stat-label">{{ stat.label }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-card">
+    <div class="card-header-row">
+      <h5>Recent Bookings</h5>
+      <span>{{ bookings.length }} total</span>
+    </div>
+
+    <div class="table-responsive" *ngIf="recentBookings.length > 0">
+      <table class="table align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Booking ID</th>
+            <th>Passenger</th>
+            <th>Route</th>
+            <th>Date</th>
+            <th>Fare</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let booking of recentBookings">
+            <td class="booking-id">{{ booking.bookingId }}</td>
+            <td>{{ booking.passengerName || '-' }}</td>
+            <td>{{ booking.from }} to {{ booking.to }}</td>
+            <td>{{ formatDate(booking.date) }}</td>
+            <td>₹{{ booking.totalFare }}</td>
+            <td>
+              <span class="status-badge"
+                [class.confirmed]="booking.status === 'CONFIRMED'"
+                [class.cancelled]="booking.status === 'CANCELLED'"
+              >
+              {{ booking.status }}
+            </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="empty-state" *ngIf="recentBookings.length === 0">
+      <i class="bi bi-ticket-perforated"></i>
+      <h6>No bookings yet</h6>
+      <p>Recent customer bookings will appear here.</p>
+    </div>
+  </div>
 </div>

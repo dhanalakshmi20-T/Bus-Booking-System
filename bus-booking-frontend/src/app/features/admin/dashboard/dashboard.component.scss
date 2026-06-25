@@ -1,0 +1,157 @@
+.dashboard-page {
+    color: #111827;
+}
+
+.page-title {
+    margin-bottom: 22px;
+
+    h3 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 800;
+    }
+
+    p {
+        margin: 6px 0 0;
+        color: #6b7280;
+    }
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 18px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    flex: 0 0 auto;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.stat-label {
+    margin-top: 4px;
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.dashboard-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    overflow: hidden;
+}
+
+.card-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    border-bottom: 1px solid #e5e7eb;
+
+    h5 {
+        margin: 0;
+        font-weight: 800;
+    }
+
+    span {
+        color: #6b7280;
+        font-size: 13px;
+        font-weight: 600;
+    }
+}
+
+.table {
+    th {
+        color: #6b7280;
+        font-size: 12px;
+        text-transform: uppercase;
+        background: #f9fafb;
+    }
+
+
+    td {
+        font-size: 14px;
+    }
+}
+
+.booking-id {
+    color: #4527a0;
+    font-weight: 800;
+    font-family: monospace;
+}
+
+.status-badge {
+    display: inline-flex;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+
+    &.confirmed {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    &.cancelled {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+}
+
+.empty-state {
+    text-align: center;
+    padding: 46px 20px;
+    color: #6b7280;
+
+    i {
+        font-size: 42px;
+        color: #c4b5fd;
+    }
+
+    h6 {
+        margin: 12px 0 6px;
+        color: #111827;
+        font-weight: 800;
+    }
+
+    p {
+        margin: 0;
+    }
+}
+
+@media (max-width: 991px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 576px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
