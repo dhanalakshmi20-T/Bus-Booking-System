@@ -1,0 +1,151 @@
+.admin-settings-page {
+  color: #111827;
+}
+
+.page-header {
+  margin-bottom: 20px;
+
+  h3 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 800;
+  }
+
+  p {
+    margin: 6px 0 0;
+    color: #6b7280;
+  }
+}
+
+.alert {
+  border-radius: 8px;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.settings-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+
+  h5 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 18px;
+    font-weight: 800;
+
+    i {
+      color: #7c4dff;
+    }
+  }
+}
+
+.form-label {
+  color: #374151;
+  font-weight: 600;
+}
+
+.form-control,
+.input-group-text {
+  min-height: 42px;
+  border-color: #d1d5db;
+  border-radius: 8px;
+
+  &:focus {
+    border-color: #7c4dff;
+    box-shadow: 0 0 0 0.2rem rgba(124, 77, 255, 0.15);
+  }
+}
+
+.input-group {
+  .input-group-text {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    background: #f5f0ff;
+    color: #4527a0;
+    font-weight: 700;
+  }
+
+  .form-control {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid #e5e7eb;
+
+  strong {
+    display: block;
+    color: #111827;
+  }
+
+  span {
+    display: block;
+    color: #6b7280;
+    font-size: 13px;
+    margin-top: 3px;
+  }
+}
+
+.form-check-input {
+  width: 42px;
+  height: 22px;
+  flex: 0 0 auto;
+  cursor: pointer;
+
+  &:checked {
+    background-color: #7c4dff;
+    border-color: #7c4dff;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.btn-primary-admin {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #7c4dff;
+  color: #ffffff;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 700;
+
+  &:hover {
+    background: #4527a0;
+    color: #ffffff;
+  }
+}
+
+@media (max-width: 767px) {
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions .btn {
+    width: 100%;
+  }
+}

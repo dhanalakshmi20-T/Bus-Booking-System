@@ -1,1 +1,103 @@
-<div class="admin-settings"></div>
+<div class="admin-settings-page">
+    <div class="page-header">
+        <div>
+            <h3>Admin Settings</h3>
+            <p>Configure platform details, booking rules and notifications.</p>
+        </div>
+    </div>
+
+    <div class="alert alert-success" *ngIf="saveSuccess">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        Settings saved successfully.
+    </div>
+
+    <div class="settings-grid">
+        <div class="settings-card">
+            <h5>
+                <i class="bi bi-building-fill"></i>
+                Platform Details
+            </h5>
+
+            <div class="mb-3">
+                <label class="form-label">Platform Name</label>
+                <input class="form-control" [(ngModel)]="settings.platformName">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Support Email</label>
+                <input type="email" class="form-control" [(ngModel)]="settings.supportEmail">
+            </div>
+
+            <div class="mb]">
+                <label class="form-label">Support Phone</label>
+                <input class="form-control" [(ngModel)]="settings.supportPhone">
+            </div>
+        </div>
+
+        <div class="settings-card">
+            <h5>
+                <i class="bi bi-ticket-perforated-fill"></i>
+                Booking Rules
+            </h5>
+
+            <div class="mb-3">
+                <label class="form-label">Cancellation window in Hours</label>
+                <input type="number" class="form-control" [(ngModel)]="settings.cancellationWindow">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Service Fee</label>
+
+                <div class="input-group">
+                    <span class="input-group-text">₹</span>
+                    <input type="number" class="form-control" [(ngModel)]="settings.serviceFee">
+                </div>
+            </div>
+
+            <div class="setting-row">
+                <div>
+                    <strong>Auto Confirm Bookings</strong>
+                    <span>New bookings are confirmed immediately.</span>
+                </div>
+
+                <input type="checkbox" class="form-check-input" [(ngModel)]="settings.autoConfirmBookings">
+            </div>
+        </div>
+
+        <div class="settings-card full-width">
+            <h5>
+                <i class="bi bi-sliders"></i>
+                System Preferences
+            </h5>
+
+           <div class="settings.row">
+                <div>
+                    <strong>Maintenance Mode</strong>
+                    <span>Temporarily restrict customer booking access.</span>
+                </div>
+
+                <input type="checkbox" class="form-check-input" [(ngModel)]="settings.maintenanceMode">
+           </div> 
+
+           <div class="setting-row">
+                <div>
+                    <strong>Email Notifications</strong>
+                    <span>Send booking and account updates to users.</span>
+                </div>
+
+                <input type="checkbox" class="form-check-input" [(ngModel)]="settings.emailNotifications">
+           </div>
+
+           <div class="actions">
+                <button class="btn btn-primary-admin" (Click)="saveSettings()">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Save Settings
+                </button>
+
+                <button class="btn btn-outline-secondary" (click)="resetSettings()">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                    Reset
+                </button>
+           </div>
+    </div>
+</div>
