@@ -1,3 +1,146 @@
-<div class="manage-buses">
-  <h2>Manage Buses</h2>
+<div class="manage-buses-page">
+  <div class="page-header">
+    <div>
+      <h3>Manage Buses</h3>
+      <p>Add, edit and control bus availability.</p>
+    </div>
+
+    <button class="btn btn-primary-admin" (click)="openAddForm()">
+      <i class="bi bi-plus-circle-fill"></i>
+      Add Bus
+    </button>
+  </div>
+
+  <div class="bus-form-card mb-4" *ngIf="showForm">
+    <h5>{{ editId ? 'Edit Bus' : 'Add New Bus' }}</h5>
+
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Bus Name</label>
+        <input class="form-control" [(ngModel)]="busForm.busName">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Bus Number</label>
+        <input class="form-control" [(ngModel)]="busForm.busNumber">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Bus Type</label>
+        <select class="form-select" [(ngModel)]="busForm.busType">
+          <option>AC</option>
+          <option>Non-AC</option>
+          <option>Sleeper</option>
+          <option>Semi-Sleeper</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">From</label>
+        <input class="form-control" [(ngModel)]="busForm.from">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">To</label>
+        <input class="form-control" [(ngModel)]="busForm.to">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Departure</label>
+        <input class="form-control" [(ngModel)]="busForm.departureTime">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Arrival</label>
+        <input class="form-control" [(ngModel)]="busForm.arrivalTime">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Total Seats</label>
+        <input type="number" class="form-control" [(ngModel)]="busForm.totalSeats">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Available Seats</label>
+        <input type="number" class="form-control" [(ngModel)]="busForm.availableSeats">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Fare</label>
+        <input type="number" class="form-control" [(ngModel)]="busForm.fare">
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-primary-admin" (click)="saveBus()">
+        <i class="bi bi-check-circle-fill"></i>
+        Save Bus
+      </button>
+
+      <button class="btn btn-outline-secondary" (click)="cancelForm()">
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <div class="list-card">
+    <div class="list-toolbar">
+      <h5>Bus List</h5>
+
+      <div class="search-box">
+        <i class="bi bi-search"></i>
+        <input class="form-control" placeholder="Search buses..." [(ngModel)]="searchText">
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Bus</th>
+            <th>Route</th>
+            <th>Timings</th>
+            <th>Seats</th>
+            <th>Fare</th>
+            <th>Status</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let bus of filteredBuses">
+            <td>
+              <strong>{{ bus.busName }}</strong>
+              <div class="muted">{{ bus.busNumber }} - {{ bus.busType }}</div>
+            </td>
+
+            <td>{{ bus.from }} to {{ bus.to }}</td>
+            <td>{{ bus.departureTime }} - {{ bus.arrivalTime }}</td>
+            <td>{{ bus.availableSeats }}/{{ bus.totalSeats }}</td>
+            <td>₹{{ bus.fare }}</td>
+
+            <td>
+              <span class="status-badge" [class.active]="bus.status === 'ACTIVE'">
+                {{ bus.status }}
+              </span>
+            </td>
+
+            <td class="text-end">
+              <button class="icon-btn" (click)="editBus(bus)">
+                <i class="bi bi-pencil-fill"></i>
+              </button>
+
+              <button class="icon-btn" (click)="toggleStatus(bus)">
+                <i class="bi bi-power"></i>
+              </button>
+
+              <button class="icon-btn danger" (click)="deleteBus(bus.id)">
+                <i class="bi bi-trash-fill"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>

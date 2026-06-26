@@ -9,6 +9,7 @@ import { ManageBookingsComponent } from './manage-bookings/manage-bookings.compo
 import { ManageUsersComponent } from './manage-users/manage-users.component';
 import { ReportsComponent } from './reports/reports.component';
 import { AdminSettingsComponent } from './settings/settings.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { AdminSettingsComponent } from './settings/settings.component';
   ],
   imports: [
     CommonModule,
+    FormsModule,
     AdminRoutingModule
   ]
 })

@@ -1,3 +1,140 @@
-<div class="manage-bookings">
-  <h2>Manage Bookings</h2>
+<div class="manage-bookings-page">
+  <div class="page-header">
+    <div>
+      <h3>Manage Bookings</h3>
+      <p>View, confirm and cancel customer bookings.</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <i class="bi bi-ticket-perforated-fill purple"></i>
+
+      <div>
+        <strong>{{ bookings.length }}</strong>
+        <span>Total Bookings</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <i class="bi bi-check-circle-fill green"></i>
+
+      <div>
+        <strong>{{ confirmedCount }}</strong>
+        <span>Confirmed</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <i class="bi bi-x-circle-fill red"></i>
+
+      <div>
+        <strong>{{ cancelledCount }}</strong>
+        <span>Cancelled</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <i class="bi bi-currency-rupee amber"></i>
+
+      <div>
+        <strong>₹{{ totalRevenue }}</strong>
+        <span>Revenue</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="list-card">
+    <div class="toolbar">
+      <div class="search-box">
+        <i class="bi bi-search"></i>
+
+        <input class="form-control" placeholder="Search bookings..." [(ngModel)]="searchText">
+      </div>
+      
+      <select class="form-select status-filter" [(ngModel)]="statusFilter">
+        <option value="ALL">All Status</option>
+        <option value="CONFIRMED">Confirmed</option>
+        <option value="CANCELLED">Cancelled</option>
+        <option value="PENDING">Pending</option>
+      </select>
+    </div>
+
+    <div class="table-responsive" *ngIf="filteredBookings.length > 0">
+      <table class="table align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Booking</th>
+            <th>Passenger</th>
+            <th>Bus</th>
+            <th>Journey</th>
+            <th>Seats</th>
+            <th>Fare</th>
+            <th>Status</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let booking of filteredBookings">
+            <td>
+              <strong class="booking-id">{{ booking.bookingId }}</strong>
+              <div class="muted">{{ formatDate(booking.bookedAt) }}</div>
+            </td>
+
+            <td>
+              <strong>{{ booking.passengerName }}</strong>
+              <div class="muted">+91 {{ booking.mobileNumber }}</div>
+            </td>
+
+            <td>
+              {{ booking.busName }}
+              <div class="muted">{{ booking.busNumber }}</div>
+            </td>
+
+            <td>
+              {{ booking.from }} to {{ booking.to }}
+              <div class="muted">{{ formatDate(booking.date) }} | {{ booking.departureTime }}</div>
+            </td>
+
+            <td>
+              <span class="seat-chip" *ngFor="let seat of booking.seats">{{ seat }}</span>
+            </td>
+
+            <td>₹{{ booking.totalFare }}</td>
+
+            <td>
+              <span class="status-badge"
+                [class.confirmed]="booking.status === 'CONFIRMED'"
+                [class.cancelled]="booking.status === 'CANCELLED'"
+                [class.pending]="booking.status === 'PENDING'"
+                >
+                {{ booking.status }}
+              </span>
+            </td>
+
+            <td class="text-end">
+              <button class="icon-btn green" *ngIf="booking.status !== 'CONFIRMED'" (click)="confirmBooking(booking)">
+                <i class="bi bi-check-lg"></i>
+              </button>
+
+              <button class="icon-btn red" *ngIf="booking.status !== 'CANCELLED'" (click)="cancelBooking(booking)">
+                <i class="bi bi-x-lg"></i>
+              </button>
+
+              <button class="icon-btn danger" (click)="deleteBooking(booking.bookingId)">
+                <i class="bi bi-trash-fill"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="empty-state" *ngIf="filteredBookings.length === 0">
+      <i class="bi bi-ticket-perforated"></i>
+      <h6>No bookings found</h6>
+      <p>Bookings will appear here after users complete reservations.</p>
+    </div>
+  </div>
 </div>
