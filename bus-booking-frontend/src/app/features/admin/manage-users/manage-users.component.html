@@ -1,1 +1,123 @@
-<div class="manage-users"></div>
+<div class="manage-users-page">
+    <div class="page-header">
+        <div>
+            <h3>Manage Users</h3>
+            <p>View, search and manage registered users.</p>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <i class="bi bi-people-fill purple"></i>
+
+            <div>
+                <strong>{{ users.length }}</strong>
+                <span>Total Users</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <i class="bi bi-check-circle-fill green"></i>
+
+            <div>
+                <strong>{{ activeCount }}</strong>
+                <span>Active Users</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <i class="bi bi-slash-circle-fill red"></i>
+
+            <div>
+                <strong>{{ blockedCount }}</strong>
+                <span>Blocked Users</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <i class="bi bi-shield-lock-fill blue"></i>
+
+            <div>
+                <strong>{{ adminCount }}</strong>
+                <span>Admins</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="list-card">
+        <div class="toolbar">
+            <div class="search-box">
+                <i class="bi bi-search"></i>
+                <input class="form-control" placeholder="Search Users..." [(ngModel)]="searchText">
+            </div>
+
+            <select class="form-select role-filter" [(ngModel)]="roleFilter">
+                <option value="ALL">All Roles</option>
+                <option value="USER">Users</option>
+                <option value="ADMIN">Admins</option>
+            </select>
+        </div>
+
+        <div class="table-responsive" *ngIf="filteredUsers.length > 0">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Contact</th>
+                        <th>Profile</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr *ngFor="let user of filteredUsers">
+                        <td>
+                            <div class="user-cell">
+                                <div class="avatar">{{ user.name ? user.name[0].toUpperCase() : 'U' }}</div>
+
+                                <div>
+                                    <strong>{{ user.name }}</strong>
+                                    <div class="muted">ID: {{ user.id }}</div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            {{ user.email }}
+                            <div class="muted" *ngIf="user.mobile">+91 {{ user.mobile }}</div>
+                        </td>
+
+                        <td>
+                            <span>{{ user.gender ? (user.gender | titlecase) : '-' }}</span>
+                            <div class="muted">{{ user.address || 'No address' }}</div>
+                        </td>
+
+                        <td>
+                            <span class="role-badge" [class.admin]="user.role === 'ADMIN'">{{ user.role }}</span>
+                        </td>
+
+                        <td>
+                            <span class="status-badge" [class.blocked]="user.status === 'BLOCKED'">{{ user.status }}</span>
+                        </td>
+
+                        <td class="text-end">
+                            <button class="icon-btn" (click)="makeAdmin(user)">
+                                <i class="bi bi-shield-fill"></i>
+                            </button>
+                            
+                            <button class="icon-btn warning" (click)="toggleStatus(user)">
+                                <i class="bi bi-power"></i>
+                            </button>
+
+                            <button class="icon-btn danger" (click)="deleteUser(user.id)">
+                                <i class="bi bi-trash-fill"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
