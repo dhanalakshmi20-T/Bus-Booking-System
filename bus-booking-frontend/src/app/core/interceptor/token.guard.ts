@@ -12,21 +12,19 @@ export class TokenInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.authService.token;
 
-    if (token) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+    const authRequest = token ? request.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    : request;
+
+  return next.handle(authRequest).pipe(catchError((error: HttpErrorResponse) => {
+    if (error.status === 401 && this.authService.isLoggedIn) {
+      this.authService.logout();
     }
 
-    return next.handle(request).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.status === 401) {
-          this.authService.logout();
-        }
-        return throwError(() => error);
-      })
-    );
+    return throwError(error);
+  }));
   }
 }

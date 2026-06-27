@@ -1,10 +1,16 @@
 :host {
-    display: flex;
-    flex-direction: column;
+    display: block;
     min-height: 100vh;
 }
 
-main {
+.user-shell {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: #f7f8fc;
+}
+
+.page-content {
     flex: 1;
-    background-color: #faf8ff;
+    width: 100%;
 }

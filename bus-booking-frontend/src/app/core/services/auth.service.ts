@@ -9,6 +9,15 @@ export interface User {
   email: string;
   role: 'USER' | 'ADMIN';
   token: string;
+  status?: 'ACTIVE' | 'BLOCKED';
+  mobile?: string;
+  dob?: string;
+  gender?: string;
+  address?: string;
+}
+
+export interface StoredUser extends User {
+  password: string;
 }
 
 const USERS_KEY = 'bb_users';
@@ -19,9 +28,7 @@ const CURRENT_KEY = 'bb_current';
 })
 export class AuthService {
 
-  private currentUserSubject = new BehaviorSubject<User | null>(
-    JSON.parse(localStorage.getItem(CURRENT_KEY) || 'null')
-  );
+  private currentUserSubject = new BehaviorSubject<User | null>(this.getStoredSession());
 
   currentUser$ = this.currentUserSubject.asObservable();
 
@@ -32,92 +39,93 @@ export class AuthService {
   }
 
   get token(): string | null {
-    return this.currentUserSubject.value?.token || null;
+    return this.currentUser?.token || null;
   }
 
   get isLoggedIn(): boolean {
-    return !!this.currentUserSubject.value;
+    return !!this.currentUser;
   }
 
   get isAdmin(): boolean {
-    return this.currentUserSubject.value?.role === 'ADMIN';
+    return this.currentUser?.role === 'ADMIN';
   }
 
-  private getUsers(): any[] {
-    try {
-      return JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
-    } catch {
-      return [];
-    }
-  }
-
-  private saveUsers(users: any[]): void {
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-  }
-
-  register(data: { name: string; email: string; password: string }): Observable<User> {
+  register(data: { name: string; email: string; password: string; }): Observable<User> {
+    const name = data.name.trim();
     const email = data.email.trim().toLowerCase();
     const password = data.password.trim();
-    const name = data.name.trim();
-
     const users = this.getUsers();
-    const exists = users.find((u: any) => u.email === email);
 
-    if (exists) {
-      return throwError(() => ({
-        error: { message: 'Email already registered. Please login.' }
-      })).pipe(delay(500));
+    const alreadyExists = users.some(user => user.email.toLowerCase() === email);
+
+    if (alreadyExists) {
+      return throwError({
+        error: {
+          message: 'Email is already registered. Please login.'
+        }
+      });
     }
 
-    const newUser: User = {
+    const user: User = {
       id: Date.now(),
       name,
       email,
       role: 'USER',
-      token: 'token-' + Date.now()
+      status: 'ACTIVE',
+      token: this.createToken()
     };
 
-    users.push({ ...newUser, password });
+    users.push({ ...user, password });
     this.saveUsers(users);
-    this.setUser(newUser);
+    this.setSession(user);
 
-    return of(newUser).pipe(delay(800));
+    return of(user).pipe(delay(800));
   }
 
-  login(data: { email: string; password: string }): Observable<User> {
+  login(data: { email: string; password: string; }): Observable<User> {
     const email = data.email.trim().toLowerCase();
     const password = data.password.trim();
 
     if (email === 'admin@busbook.com' && password === 'admin123') {
-      const adminUser: User = {
+      const admin: User = {
         id: 0,
         name: 'Admin',
-        email: 'admin@busbook.com',
+        email,
         role: 'ADMIN',
-        token: 'admin-token'
+        status: 'ACTIVE',
+        token: this.createToken()
       };
-      this.setUser(adminUser);
-      return of(adminUser).pipe(delay(800));
+
+      this.setSession(admin);
+      return of(admin).pipe(delay(800));
     }
 
-    const users = this.getUsers();
-    const found = users.find((u: any) => u.email === email && u.password === password);
+    const storedUser = this.getUsers().find(user =>
+      user.email.toLowerCase() === email && user.password === password
+    );
 
-    if (!found) {
-      return throwError(() => ({
+    if (!storedUser) {
+      return throwError({
         error: { message: 'Invalid email or password.' }
-      })).pipe(delay(500));
+      });
     }
+
+    if (storedUser.status === 'BLOCKED') {
+      return throwError({
+        error: { message: 'Your account has been blocked. Contact support.' }
+      });
+    }
+
+    const { password: ignoredPassword, ...userData } = storedUser;
 
     const user: User = {
-      id: found.id,
-      name: found.name,
-      email: found.email,
-      role: found.role || 'USER',
-      token: 'token-' + Date.now()
+      ...userData,
+      role: userData.role || 'USER',
+      status: userData.status || 'ACTIVE',
+      token: this.createToken()
     };
 
-    this.setUser(user);
+    this.setSession(user);
     return of(user).pipe(delay(800));
   }
 
@@ -127,8 +135,46 @@ export class AuthService {
     this.router.navigate(['/auth/login']);
   }
 
-  private setUser(user: User): void {
+  updateCurrentUser(changes: Partial<User>): void {
+    if (!this.currentUser) {
+      return;
+    }
+
+    this.setSession({
+      ...this.currentUser,
+      ...changes
+    });
+  }
+
+  private getUsers(): StoredUser[] {
+    try {
+      return JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+    }
+    catch {
+      return [];
+    }
+  }
+
+  private saveUsers(users: StoredUser[]): void {
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  }
+
+  private getStoredSession(): User | null {
+    try {
+      return JSON.parse(localStorage.getItem(CURRENT_KEY) || 'null');
+    }
+    catch {
+      localStorage.removeItem(CURRENT_KEY);
+      return null;
+    }
+  }
+
+  private setSession(user: User): void {
     localStorage.setItem(CURRENT_KEY, JSON.stringify(user));
     this.currentUserSubject.next(user);
+  }
+
+  private createToken(): string {
+    return `token-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   }
 }
