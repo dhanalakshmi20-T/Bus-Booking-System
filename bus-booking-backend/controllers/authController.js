@@ -2,51 +2,129 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-const generateToken = (user) =>
-    jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
+const publicUser = user => ({
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    role: user.role,
+    status: user.status
+});
+
+const generateToken = user => {
+    if (!process.env.JWT_SECRET) {
+        throw new Error('JWT_SECRET is not configured');
+    }
+
+    return jwt.sign(
+        {
+            id: user._id,
+            role: user.role
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+    );
+};
 
 exports.register = async (req, res) => {
     try {
-        const { name, email, password, phone } = req.body;
-        const existing = User.findOne({ email });
-        if (existing) return res.status(400).json({ message: 'Email already registered' });
+        const name = String(req.body.name || '').trim();
+        const email = String(req.body.email || '').trim().toLowerCase();
+        const password = String(req.body.password || '');
+        const phone = String(req.body,phone || '').trim();
 
-        const hashed = await bcrypt.hash(password, 10);
-        const user = User.create({ name, email, password: hashed, phone, role: 'user' });
-        res.status(201).json({
-            token: generateToken(user),
-            user: { id: user._id, name: user.name, email: user.email, role: user.role }
+        if (!name || !email || !password) {
+            return res.status(400).json({
+                message: 'Name, email and password are required'
+            });
+        }
+
+        if (password.length < 6) {
+            return res.status(400).json({
+                message: 'Password must contain at least 6 characters'
+            });
+        }
+
+        if (phone && !/^\d{10}$/.test(phone)) {
+            return res.status(400).json({
+                message: 'Phone number must contain 10 digits'
+            });
+        }
+
+        if (User.findOne({ email })) {
+            return res.status(409).json({
+                message: 'Email is already registered'
+            });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = User.create({
+            name,
+            email,
+            password: hashedPassword,
+            phone,
+            role: 'user',
+            status: 'ACTIVE'
         });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+
+        return res.status(201).json({
+            token: generateToken(user),
+            user: publicUser(user)
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: error.message
+        });
     }
 };
 
 exports.login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const email = String(req.body.email || '').trim().toLowerCase();
+        const password = String(req.body.password || '');
+
+        if (!email || !password) {
+            return res.status(400).json({
+                message: 'Email and password are required'
+            });
+        }
+
         const user = User.findOne({ email });
-        if (!user) return res.status(400).json({ message: 'Invalid credentials' });
 
-        const match = await bcrypt.compare(password, user.password);
-        if (!match) return res.status(400).json({ message: 'Invalid credentials' });
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            return res.status(401).json({
+                message: 'Invalid email or password'
+            });
+        }
 
-        res.json({
+        if (user.status === 'BLOCKED') {
+            return res.status(403).json({
+                message: 'Your account has been blocked'
+            });
+        }
+
+        return res.json({
             token: generateToken(user),
-            user: { id: user._id, name: user.name, email: user.email, role: user.role }
+            user: publicUser(user)
         });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: error.message
+        });
     }
 };
 
 exports.getProfile = (req, res) => {
-    try {
-        const user = User.findById(req.user.id);
-        if (!user) return res.status(404).json({ message: 'User not found' });
-        const { password, ...profile } = user;
-        res.json(profile);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+    const user = User.findById(req.user.id);
+
+    if (!user) {
+        return res.status(404).json({
+            message: 'User not found'
+        });
     }
+
+    return res.json(publicUser(user));
 };
