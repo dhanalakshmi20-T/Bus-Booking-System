@@ -1,26 +1,11 @@
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Injectable } from "@angular/core";
+import { BehaviorSubject, Observable } from "rxjs";
+import { environment } from "src/environments/environment";
+import { AuthResponse, User } from "../models/user.model";
+import { HttpClient } from "@angular/common/http";
+import { Router } from "@angular/router";
+import { map } from "rxjs/operators";
 
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: 'USER' | 'ADMIN';
-  token: string;
-  status?: 'ACTIVE' | 'BLOCKED';
-  mobile?: string;
-  dob?: string;
-  gender?: string;
-  address?: string;
-}
-
-export interface StoredUser extends User {
-  password: string;
-}
-
-const USERS_KEY = 'bb_users';
 const CURRENT_KEY = 'bb_current';
 
 @Injectable({
@@ -28,11 +13,14 @@ const CURRENT_KEY = 'bb_current';
 })
 export class AuthService {
 
+  private readonly apiUrl = `${environment.apiUrl}/auth`;
+
   private currentUserSubject = new BehaviorSubject<User | null>(this.getStoredSession());
 
-  currentUser$ = this.currentUserSubject.asObservable();
-
-  constructor(private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
   get currentUser(): User | null {
     return this.currentUserSubject.value;
@@ -50,83 +38,14 @@ export class AuthService {
     return this.currentUser?.role === 'ADMIN';
   }
 
-  register(data: { name: string; email: string; password: string; }): Observable<User> {
-    const name = data.name.trim();
-    const email = data.email.trim().toLowerCase();
-    const password = data.password.trim();
-    const users = this.getUsers();
-
-    const alreadyExists = users.some(user => user.email.toLowerCase() === email);
-
-    if (alreadyExists) {
-      return throwError({
-        error: {
-          message: 'Email is already registered. Please login.'
-        }
-      });
-    }
-
-    const user: User = {
-      id: Date.now(),
-      name,
-      email,
-      role: 'USER',
-      status: 'ACTIVE',
-      token: this.createToken()
-    };
-
-    users.push({ ...user, password });
-    this.saveUsers(users);
-    this.setSession(user);
-
-    return of(user).pipe(delay(800));
+  register(data: { name: string; email: string; password: string; phone?: string; }): Observable<User> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, data)
+      .pipe(map(response => this.createSession(response)));
   }
 
   login(data: { email: string; password: string; }): Observable<User> {
-    const email = data.email.trim().toLowerCase();
-    const password = data.password.trim();
-
-    if (email === 'admin@busbook.com' && password === 'admin123') {
-      const admin: User = {
-        id: 0,
-        name: 'Admin',
-        email,
-        role: 'ADMIN',
-        status: 'ACTIVE',
-        token: this.createToken()
-      };
-
-      this.setSession(admin);
-      return of(admin).pipe(delay(800));
-    }
-
-    const storedUser = this.getUsers().find(user =>
-      user.email.toLowerCase() === email && user.password === password
-    );
-
-    if (!storedUser) {
-      return throwError({
-        error: { message: 'Invalid email or password.' }
-      });
-    }
-
-    if (storedUser.status === 'BLOCKED') {
-      return throwError({
-        error: { message: 'Your account has been blocked. Contact support.' }
-      });
-    }
-
-    const { password: ignoredPassword, ...userData } = storedUser;
-
-    const user: User = {
-      ...userData,
-      role: userData.role || 'USER',
-      status: userData.status || 'ACTIVE',
-      token: this.createToken()
-    };
-
-    this.setSession(user);
-    return of(user).pipe(delay(800));
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, data)
+      .pipe(map(response => this.createSession(response)));
   }
 
   logout(): void {
@@ -146,22 +65,27 @@ export class AuthService {
     });
   }
 
-  private getUsers(): StoredUser[] {
-    try {
-      return JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
-    }
-    catch {
-      return [];
-    }
-  }
+  private createSession(response: AuthResponse): User {
+    const user: User = {
+      id: response.user.id,
+      name: response.user.name,
+      email: response.user.email,
+      phone: response.user.phone,
+      mobile: response.user.phone,
+      role: response.user.role === 'admin' ? 'ADMIN' : 'USER',
+      status: response.user.status || 'ACTIVE',
+      token: response.token
+    };
 
-  private saveUsers(users: StoredUser[]): void {
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    this.setSession(user);
+    return user;
   }
 
   private getStoredSession(): User | null {
     try {
-      return JSON.parse(localStorage.getItem(CURRENT_KEY) || 'null');
+      const user = JSON.parse(localStorage.getItem(CURRENT_KEY) || 'null');
+
+      return user?.token ? user : null;
     }
     catch {
       localStorage.removeItem(CURRENT_KEY);
@@ -172,9 +96,5 @@ export class AuthService {
   private setSession(user: User): void {
     localStorage.setItem(CURRENT_KEY, JSON.stringify(user));
     this.currentUserSubject.next(user);
-  }
-
-  private createToken(): string {
-    return `token-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   }
 }

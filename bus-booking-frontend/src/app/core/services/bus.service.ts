@@ -1,36 +1,15 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
 import { environment } from "src/environments/environment";
-
-export interface Bus {
-  id: string | number;
-  busName: string;
-  busNumber: string;
-  busType: string;
-  from: string;
-  to: string;
-  departureTime: string;
-  arrivalTime: string;
-  totalSeats: number;
-  availableSeats: number;
-  fare: number;
-  status: string;
-  date?: string;
-}
-
-export interface SearchParams {
-  from: string;
-  to: string;
-  date: string;
-}
+import { Bus, SearchParams } from "../models/bus.model";
+import { map } from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
 })
 export class BusService {
-  
+
   private readonly apiUrl = `${environment.apiUrl}/buses`;
 
   constructor(private http: HttpClient) {}
@@ -70,8 +49,10 @@ export class BusService {
     );
   }
 
-  deleteBus(id: string | number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  deleteBus(id: string | number): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }> (
+      `${this.apiUrl}/${id}`
+    );
   }
 
   private normalizeBus(bus: any): Bus {

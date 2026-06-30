@@ -1,47 +1,9 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { environment } from "src/environments/environment";
+import { Booking, BookingRequest, CancelBookingResponse } from "../models/booking.model";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
-import { environment } from "src/environments/environment";
-
-export interface Passenger {
-  name: string;
-  age: number;
-  gender: string;
-  seatNumber: string;
-}
-
-export interface BusDetails {
-  busName: string;
-  from: string;
-  to: string;
-  date: string;
-  departureTime?: string;
-  arrivalTime?: string;
-  fare?: number;
-}
-
-export interface UserDetails {
-  name: string;
-  email: string;
-}
-
-export interface Booking {
-  id: string;
-  userId: string;
-  busId: string;
-  passengers: Passenger[];
-  totalFare: number;
-  status: 'CONFIRMED' | 'CANCELLED' | 'PENDING';
-  bookingDate: string;
-  busDetails?: BusDetails;
-  userDetails?: UserDetails;
-}
-
-export interface BookingRequest {
-  busId: string | number;
-  passengers: Passenger[];
-}
 
 @Injectable({
   providedIn: 'root'
@@ -70,20 +32,29 @@ export class BookingService {
     );
   }
 
-  cancelBooking(id: string): Observable<{ message: string }> {
-    return this.http.put<{ message: string }>(
-      `${this.apiUrl}/cancel/${id}`,
-      {}
+  cancelBooking(id: string): Observable<CancelBookingResponse> {
+    return this.http.put<CancelBookingResponse>(
+      `${this.apiUrl}/cancel/${id}`, {}
     );
   }
-  
+
   private normalizeBooking(booking: any): Booking {
     return {
       ...booking,
       id: booking.id || booking._id,
       userId: booking.userId || booking.user,
       busId: booking.busId || booking.bus,
-      status: (booking.status || 'pending').toUpperCase()
+      status: this.normalizeStatus(booking.status)
     };
+  }
+
+  private normalizeStatus(status: string): Booking['status'] {
+    const normalized = String(status || '').toUpperCase();
+
+    if (normalized === 'CONFIRMED' || normalized === 'CANCELLED') {
+      return normalized;
+    }
+
+    return 'PENDING';
   }
 }
