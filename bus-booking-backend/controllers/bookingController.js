@@ -223,3 +223,31 @@ exports.cancelBooking = (req, res) => {
         });
     }
 };
+
+exports.getBookingById = (req, res) => {
+    try {
+        const booking = Booking.findById(req.params.id);
+
+        if (!booking) {
+            return res.status(404).json({
+                message: 'Booking not found'
+            });
+        }
+
+        const ownsBooking = booking.user === req.user.id;
+        const isAdmin = req.user.role === 'admin';
+
+        if (!ownsBooking && !isAdmin) {
+            return res.status(403).json({
+                message: 'You cannot view this booking'
+            });
+        }
+
+        return res.json(addBookingDetails(booking));
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: error.message
+        });
+    }
+};

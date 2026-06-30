@@ -1,3 +1,8 @@
+export interface BusSeat {
+    seatNumber: string;
+    isBooked: boolean;
+}
+
 export interface Bus {
     id: string | number;
     busName: string;
@@ -12,6 +17,7 @@ export interface Bus {
     fare: number;
     status: string;
     date?: string;
+    seats?: BusSeat[];
 }
 
 export interface SearchParams {

@@ -20,6 +20,12 @@ export class BookingService {
     );
   }
 
+  getBookingById(id: string): Observable<Booking> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+      map(booking => this.normalizeBooking(booking))
+    );
+  }
+
   getMyBookings(): Observable<Booking[]> {
     return this.http.get<any[]>(`${this.apiUrl}/my`).pipe(
       map(bookings => bookings.map(booking => this.normalizeBooking(booking)))

@@ -1,25 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-
-export interface SeatLayout {
-  seatNumber: string;
-  status: 'available' | 'booked' | 'selected' | 'ladies';
-  type: 'window' | 'aisle';
-  deck?: 'lower' | 'upper';
-  section?: 'seat' | 'berth';
-}
-
-export interface BusSummary {
-  id: number;
-  busName: string;
-  busNumber: string;
-  busType: string;
-  from: string;
-  to: string;
-  departureTime: string;
-  arrivalTime: string;
-  fare: number;
-}
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Bus } from "src/app/core/models/bus.model";
+import { SeatLayout } from "src/app/core/models/seat.model";
+import { BookingService } from "src/app/core/services/booking.service";
+import { BusService } from "src/app/core/services/bus.service";
 
 @Component({
   selector: 'app-seat-selection',
@@ -28,53 +12,102 @@ export interface BusSummary {
 })
 export class SeatSelectionComponent implements OnInit {
 
-  busId = 0;
+  busId = '';
   date = '';
   from = '';
   to = '';
-  isLoading = true;
 
-  bus: BusSummary | null = null;
+  bus: Bus | null = null;
   seats: SeatLayout[] = [];
   selectedSeats: string[] = [];
 
   passengerName = '';
   passengerAge = '';
-  passengerGender = 'male';
+  passengerGender = 'female';
   mobileNumber = '';
-  errorMessage = '';
-  isBooking = false;
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  isLoading = true;
+  isBooking = false;
+  errorMessage = '';
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private busService: BusService,
+    private bookingService: BookingService
+  ) {}
 
   ngOnInit(): void {
-    this.busId = Number(this.route.snapshot.paramMap.get('busId'));
+    this.busId = this.route.snapshot.paramMap.get('busId') || '';
+
     this.route.queryParams.subscribe(params => {
-      this.date = params['date'] || '';
-      this.from = params['from'] || '';
-      this.to   = params['to']   || '';
+      this.date = params.date || '';
+      this.from = params.from || '';
+      this.to = params.to || '';
     });
+
+    if (!this.busId) {
+      this.errorMessage = 'Invalid bus selection';
+      this.isLoading = false;
+      return;
+    }
+
     this.loadBusAndSeats();
   }
 
   private loadBusAndSeats(): void {
-    setTimeout(() => {
-      this.bus = this.getMockBus();
-      this.seats = this.generateSeats();
-      this.isLoading = false;
-    }, 600);
+    this.isLoading = true;
+
+    this.busService.getBusById(this.busId).subscribe({
+      next: bus => {
+        this.bus = bus,
+        this.date = this.date || bus.date || '';
+        this.from = bus.from;
+        this.to = bus.to;
+        this.seats = this.buildSeats(bus);
+        this.isLoading = false;
+      },
+      error: error => {
+        this.errorMessage = error.error?.message || 'Unable to load details.';
+        this.isLoading = false;
+      }
+    });
   }
 
-  private getMockBus(): BusSummary {
-    const buses: { [key: number]: BusSummary } = {
-      1: { id: 1, busName: 'Royal Travels',      busNumber: 'TN01AB1234', busType: 'AC',           from: 'Chennai', to: 'Bangalore', departureTime: '06:00 AM', arrivalTime: '11:00 AM', fare: 350 },
-      2: { id: 2, busName: 'Sri Murugan Travels', busNumber: 'TN02CD5678', busType: 'Non-AC',       from: 'Chennai', to: 'Bangalore', departureTime: '08:30 AM', arrivalTime: '02:00 PM', fare: 220 },
-      3: { id: 3, busName: 'Orange Travels',      busNumber: 'KA03EF9012', busType: 'Sleeper',      from: 'Chennai', to: 'Bangalore', departureTime: '09:00 PM', arrivalTime: '05:00 AM', fare: 550 },
-      4: { id: 4, busName: 'VRL Travels',         busNumber: 'KA04GH3456', busType: 'AC',           from: 'Chennai', to: 'Bangalore', departureTime: '10:30 AM', arrivalTime: '04:30 PM', fare: 420 },
-      5: { id: 5, busName: 'SRM Travels',         busNumber: 'TN05IJ7890', busType: 'Semi-Sleeper', from: 'Chennai', to: 'Bangalore', departureTime: '11:00 PM', arrivalTime: '06:00 AM', fare: 480 },
-      6: { id: 6, busName: 'Praveen Travels',     busNumber: 'TN06KL2345', busType: 'Non-AC',       from: 'Chennai', to: 'Bangalore', departureTime: '07:00 AM', arrivalTime: '01:00 PM', fare: 190 }
-    };
-    return buses[this.busId] || buses[1];
+  private buildSeats(bus: Bus): SeatLayout[] {
+    const source = bus.seats || [];
+    const half = Math.ceil(source.length / 2);
+
+    return source.map((seat, index) => {
+      const layout: SeatLayout = {
+        seatNumber: seat.seatNumber,
+        status: seat.isBooked ? 'booked' : 'available',
+        type: 'aisle',
+        section: 'seat'
+      };
+
+      if (bus.busType === 'Sleeper') {
+        const deckIndex = index < half ? index : index - half;
+
+        layout.deck = index < half ? 'lower' : 'upper';
+        layout.section = 'berth';
+        layout.type = deckIndex % 3 === 2 ? 'aisle' : 'window';
+      }
+      else if (bus.busType === 'Semi-Sleeper') {
+        const column = index % 3;
+
+        layout.section = column === 2 ? 'berth' : 'seat';
+
+        layout.type = column === 0 || column === 2 ? 'window' : 'aisle';
+      }
+      else {
+        const column = index % 4;
+
+        layout.type = column === 0 || column === 3 ? 'window' : 'aisle';
+      }
+
+      return layout;
+    });
   }
 
   get isSleeperBus(): boolean {
@@ -89,126 +122,48 @@ export class SeatSelectionComponent implements OnInit {
     return !this.isSleeperBus && !this.isSemiSleeperBus;
   }
 
-  private generateSeats(): SeatLayout[] {
-    if (this.isSleeperBus)     return this.generateSleeperSeats();
-    if (this.isSemiSleeperBus) return this.generateSemiSleeperSeats();
-    return this.generateStandardSeats();
-  }
-
-  private generateStandardSeats(): SeatLayout[] {
-    const seats: SeatLayout[] = [];
-    const booked = [3, 7, 12, 16, 21, 25, 30, 34];
-    const ladies = [1, 2, 5, 6];
-    for (let i = 1; i <= 40; i++) {
-      const col = (i - 1) % 4;
-      const type: 'window' | 'aisle' = (col === 0 || col === 3) ? 'window' : 'aisle';
-      let status: SeatLayout['status'] = 'available';
-      if (booked.includes(i)) status = 'booked';
-      else if (ladies.includes(i)) status = 'ladies';
-      seats.push({ seatNumber: `S${i}`, status, type, section: 'seat' });
-    }
-    return seats;
-  }
-
-  private generateSemiSleeperSeats(): SeatLayout[] {
-    const seats: SeatLayout[] = [];
-    const bookedSeats  = [2, 5, 9, 14, 18];
-    const bookedBerths = [2, 4, 7];
-    const ladiesSeats  = [1, 3];
-
-    let seatNum = 1;
-    let berthNum = 1;
-
-    for (let row = 0; row < 10; row++) {
-      for (let col = 0; col < 2; col++) {
-        let status: SeatLayout['status'] = 'available';
-        if (bookedSeats.includes(seatNum))  status = 'booked';
-        else if (ladiesSeats.includes(seatNum)) status = 'ladies';
-        seats.push({ seatNumber: `S${seatNum}`, status, type: col === 0 ? 'window' : 'aisle', section: 'seat' });
-        seatNum++;
-      }
-      
-      let status: SeatLayout['status'] = 'available';
-      if (bookedBerths.includes(berthNum)) status = 'booked';
-      seats.push({ seatNumber: `B${berthNum}`, status, type: 'window', section: 'berth' });
-      berthNum++;
-    }
-
-    return seats;
-  }
-
-  private generateSleeperSeats(): SeatLayout[] {
-    const seats: SeatLayout[] = [];
-    const bookedLower = [2, 5, 9, 13];
-    const bookedUpper = [3, 7, 11, 15];
-    const ladiesBerths = [1, 2];
-
-    for (let i = 1; i <= 18; i++) {
-      const col = (i - 1) % 3;
-      const type: 'window' | 'aisle' = col === 2 ? 'aisle' : 'window';
-      let status: SeatLayout['status'] = 'available';
-      if (bookedLower.includes(i)) status = 'booked';
-      else if (ladiesBerths.includes(i)) status = 'ladies';
-      seats.push({ seatNumber: `L${i}`, status, type, deck: 'lower', section: 'berth' });
-    }
-
-    for (let i = 1; i <= 18; i++) {
-      const col = (i - 1) % 3;
-      const type: 'window' | 'aisle' = col === 2 ? 'aisle' : 'window';
-      let status: SeatLayout['status'] = 'available';
-      if (bookedUpper.includes(i)) status = 'booked';
-      seats.push({ seatNumber: `U${i}`, status, type, deck: 'upper', section: 'berth' });
-    }
-
-    return seats;
-  }
-
   get rows(): SeatLayout[][] {
-    let src: SeatLayout[];
-    if (this.isSleeperBus) {
-      src = this.seats.filter(s => s.deck === 'lower');
-    }
-    else if (this.isSemiSleeperBus) {
-      src = this.seats.filter(s => s.section === 'seat');
-    }
-    else {
-      src = this.seats;
-    }
     const rows: SeatLayout[][] = [];
-    for (let i = 0; i < src.length; i += 4) {
-      rows.push(src.slice(i, i + 4));
-    }
-    return rows;
-  }
 
-  get upperRows(): SeatLayout[][] {
-    const src = this.seats.filter(s => s.deck === 'upper' && this.isSleeperBus);
-    const rows: SeatLayout[][] = [];
-    for (let i = 0; i < src.length; i += 3) {
-      rows.push(src.slice(i, i + 3));
+    for (let index = 0; index < this.seats.concat.length; index += 4) {
+      rows.push(this.seats.slice(index, index + 4));
     }
+
     return rows;
   }
 
   get semiRows(): SeatLayout[][] {
     const rows: SeatLayout[][] = [];
-    for (let i = 0; i < this.seats.length; i += 3) {
-      rows.push(this.seats.slice(i, i + 3));
+
+    for (let index = 0; index < this.seats.length; index += 3) {
+      rows.push(this.seats.slice(index, index + 3));
     }
+
     return rows;
   }
 
-  get sleeperRows(): { lower: SeatLayout[], upper: SeatLayout[] }[] {
-    const lower = this.seats.filter(s => s.deck === 'lower');
-    const upper = this.seats.filter(s => s.deck === 'upper');
-    const rows = [];
-    const totalRows = Math.ceil(lower.length / 3);
-    for (let i = 0; i < totalRows; i++) {
+  get sleeperRows(): {
+    lower: SeatLayout[];
+    upper: SeatLayout[];
+  }[] {
+    const lower = this.seats.filter(seat => seat.deck === 'lower');
+
+    const upper = this.seats.filter(seat => seat.deck === 'upper');
+
+    const totalRows = Math.max(Math.ceil(lower.length / 3), Math.ceil(upper.length / 3));
+
+    const rows: {
+      lower: SeatLayout[];
+      upper: SeatLayout[];
+    }[] = [];
+
+    for (let index = 0; index < totalRows; index++) {
       rows.push({
-        lower: lower.slice(i * 3, i * 3 + 3),
-        upper: upper.slice(i * 3, i * 3 + 3)
+        lower: lower.slice(index * 3, index * 3 + 3),
+        upper: upper.slice(index * 3, index * 3 + 3)
       });
     }
+
     return rows;
   }
 
@@ -217,15 +172,17 @@ export class SeatSelectionComponent implements OnInit {
   }
 
   toggleSeat(seat: SeatLayout): void {
-    if (seat.status === 'booked') return;
-
-    if (seat.status === 'selected') {
-      seat.status = this.getOriginalSeatStatus(seat);
-      this.selectedSeats = this.selectedSeats.filter(s => s !== seat.seatNumber);
+    if (seat.status === 'booked') {
       return;
     }
 
-    if (this.selectedSeats.length >= 6) {
+    if (seat.status === 'selected') {
+      seat.status = 'available';
+      this.selectedSeats = this.selectedSeats.filter(seatNumber => seatNumber !== seat.seatNumber);
+      return;
+    }
+
+    if (this.selectedSeats.length >= 0) {
       this.errorMessage = 'You can select a maximum of 6 seats.';
       return;
     }
@@ -235,59 +192,75 @@ export class SeatSelectionComponent implements OnInit {
     this.errorMessage = '';
   }
 
-  private getOriginalSeatStatus(seat: SeatLayout): SeatLayout['status'] {
-    const ladiesStandardSeats = ['S1', 'S2', 'S5', 'S6'];
-    const ladiesSemiSeats = ['S1', 'S3'];
-    const ladiesSleeperBerths = ['L1', 'L2'];
-
-    if (
-      ladiesStandardSeats.includes(seat.seatNumber) ||
-      ladiesSemiSeats.includes(seat.seatNumber) ||
-      ladiesSleeperBerths.includes(seat.seatNumber)
-    ) {
-      return 'ladies';
-    }
-
-    return 'available';
-  }
-
   confirmBooking(): void {
     this.errorMessage = '';
-    if (this.selectedSeats.length === 0) { this.errorMessage = 'Please select at least one seat.'; return; }
-    if (!this.passengerName.trim()) { this.errorMessage = 'Please enter passenger name.'; return; }
-    if (!this.passengerAge || Number(this.passengerAge) < 1 || Number(this.passengerAge) > 99) {
-      this.errorMessage = 'Please enter a valid age (1–99).';
+
+    if (!this.bus) {
+      this.errorMessage = 'Bus details are unavailable.';
       return;
     }
-    if (!this.mobileNumber.trim() || this.mobileNumber.length !== 10) {
-      this.errorMessage = 'Please enter a valid 10-digit mobile number.';
+
+    if (this.selectedSeats.length === 0) {
+      this.errorMessage = 'Please select at least one seat.';
+      return;
+    }
+
+    if (!this.passengerName.trim()) {
+      this.errorMessage = 'Please enter passenger name.';
+      return;
+    }
+
+    const age = Number(this.passengerAge);
+
+    if (!age || age < 1 || age > 99) {
+      this.errorMessage = 'Please enter a valid age between 1 and 99.';
+      return;
+    }
+
+    if (!/^\d{10}$/.test(this.mobileNumber.trim())) {
+      this.errorMessage = 'Please enter a valid 10-digit mobile number';
       return;
     }
 
     this.isBooking = true;
-    const booking = {
-      busId: this.busId, busName: this.bus?.busName, busNumber: this.bus?.busNumber,
-      from: this.bus?.from, to: this.bus?.to, date: this.date,
-      departureTime: this.bus?.departureTime, arrivalTime: this.bus?.arrivalTime,
-      seats: this.selectedSeats, totalFare: this.totalFare,
-      passengerName: this.passengerName.trim(), passengerAge: this.passengerAge,
-      passengerGender: this.passengerGender, mobileNumber: this.mobileNumber.trim(),
-      status: 'CONFIRMED', bookingId: 'BK' + Date.now(), bookedAt: new Date().toISOString()
-    };
 
-    setTimeout(() => {
-      const existing = JSON.parse(localStorage.getItem('bb_bookings') || '[]');
-      existing.push(booking);
-      localStorage.setItem('bb_bookings', JSON.stringify(existing));
-      this.isBooking = false;
-      this.router.navigate(['/booking-success'], { queryParams: { bookingId: booking.bookingId } });
-    }, 1200);
+    this.bookingService.createBooking({
+      busId: this.busId,
+      passengers: this.selectedSeats.map(seatNumber => ({
+        name: this.passengerName.trim(),
+        age,
+        gender: this.passengerGender,
+        seatNumber
+      }))
+    }).subscribe({
+      next: booking => {
+        this.isBooking = false;
+
+        this.router.navigate(['/booking-success'], {
+          queryParams: {
+            bookingId: booking.bookingId || booking.id
+          }
+        });
+      },
+      error: error => {
+        this.isBooking = false;
+        this.errorMessage = error.error?.message || 'Unable to complete booking.';
+
+        if (error.status === 409) {
+          this.selectedSeats = [];
+          this.loadBusAndSeats();
+        }
+      }
+    });
   }
 
   goBack(): void {
     this.router.navigate(['/search-buses'], {
-      queryParams: { from: this.from, to: this.to, date: this.date }
+      queryParams: {
+        from: this.from,
+        to: this.to,
+        date: this.date
+      }
     });
   }
 }
-  
