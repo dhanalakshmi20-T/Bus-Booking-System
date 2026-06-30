@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, User } from 'src/app/core/services/auth.service';
+import { User } from 'src/app/core/models/user.model';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -58,13 +59,19 @@ export class HomeComponent implements OnInit {
   }
 
   searchBuses(from: string, to: string): void {
-    const today = new Date().toISOString().split('T')[0];
+    const journey = new Date();
+    journey.setDate(journey.getDate() + 1);
+    const journeyDate = [
+      journey.getFullYear(),
+      String(journey.getMonth() + 1).padStart(2, '0'),
+      String(journey.getDate()).padStart(2, '0')
+    ].join('-');
 
     this.router.navigate(['/search-buses'], {
       queryParams: {
         from: from.trim(),
         to: to.trim(),
-        date: today
+        date: journeyDate
       }
     });
   }

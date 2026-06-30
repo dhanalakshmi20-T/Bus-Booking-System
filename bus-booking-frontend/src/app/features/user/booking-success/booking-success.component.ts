@@ -1,25 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-
-export interface BookingDetail {
-  bookingId: string;
-  busName: string;
-  busNumber: string;
-  busType?: string;
-  from: string;
-  to: string;
-  date: string;
-  departureTime: string;
-  arrivalTime: string;
-  seats: string[];
-  totalFare: number;
-  passengerName: string;
-  passengerAge: string;
-  passengerGender: string;
-  mobileNumber: string;
-  status: string;
-  bookedAt: string;
-}
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { BookingService } from "src/app/core/services/booking.service";
+import { Booking, BusDetails, Passenger } from "src/app/core/models/booking.model";
 
 @Component({
   selector: 'app-booking-success',
@@ -28,47 +10,100 @@ export interface BookingDetail {
 })
 export class BookingSuccessComponent implements OnInit {
 
-  booking: BookingDetail | null = null;
+  booking: Booking | null = null;
   bookingId = '';
-  notFound = false;
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  isLoading = true;
+  notFound = false;
+  errorMessage = '';
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private bookingService: BookingService
+  ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      this.bookingId = params['bookingId'] || '';
+    this.route.queryParamMap.subscribe(params => {
+      this.bookingId = params.get('bookingId') || '';
+
+      if (!this.bookingId) {
+        this.isLoading = false;
+        this.notFound = true;
+        return;
+      }
+
       this.loadBooking();
     });
   }
 
   private loadBooking(): void {
-    if (!this.bookingId) {
-      this.notFound = true;
-      return;
-    }
-    const all = JSON.parse(localStorage.getItem('bb_bookings') || '[]');
-    const found = all.find((b: BookingDetail) => b.bookingId === this.bookingId);
-    if (found) {
-      this.booking = found;
-    }
-    else {
-      this.notFound = true;
-    }
+    this.isLoading = true;
+    this.notFound = false;
+    this.errorMessage = '';
+
+    this.bookingService.getBookingById(this.bookingId).subscribe({
+      next: booking => {
+        this.booking = booking;
+        this.isLoading = false;
+      },
+      error: error => {
+        this.booking = null;
+        this.isLoading = false;
+        this.notFound = true;
+        this.errorMessage = error.error?.message || 'Unable to load booking details.';
+      }
+    });
+  }
+
+  get ticketNumber(): string {
+    return this.booking?.bookingId || this.booking?.id || '';
+  }
+
+  get busDetails(): BusDetails | null {
+    return this.booking?.busDetails || null;
+  }
+
+  get passengers(): Passenger[] {
+    return this.booking?.passengers || [];
+  }
+
+  get primaryPassenger(): Passenger | null {
+    return this.passengers[0] || null;
+  }
+
+  get seatNumbers(): string[] {
+    return this.passengers.map(passenger => passenger.seatNumber);
   }
 
   get formattedDate(): string {
-    if (!this.booking?.date) return '';
-    const d = new Date(this.booking.date);
-    return d.toLocaleDateString('en-IN', {
-      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    const date = this.busDetails?.date;
+
+    if (!date) {
+      return '';
+    }
+
+    return new Date(date).toLocaleDateString('en-IN', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
     });
   }
 
   get bookedAtFormatted(): string {
-    if (!this.booking?.bookedAt) return '';
-    const d = new Date(this.booking.bookedAt);
-    return d.toLocaleString('en-IN', {
-      day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+    const date = this.booking?.bookingDate;
+
+    if (!date) {
+      return '';
+    }
+
+    return new Date(date).toLocaleString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   }
 

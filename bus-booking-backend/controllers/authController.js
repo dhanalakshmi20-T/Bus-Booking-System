@@ -7,6 +7,9 @@ const publicUser = user => ({
     name: user.name,
     email: user.email,
     phone: user.phone,
+    dob: user.dob || '',
+    gender: user.gender || '',
+    address: user.address || '',
     role: user.role,
     status: user.status
 });
@@ -31,7 +34,7 @@ exports.register = async (req, res) => {
         const name = String(req.body.name || '').trim();
         const email = String(req.body.email || '').trim().toLowerCase();
         const password = String(req.body.password || '');
-        const phone = String(req.body,phone || '').trim();
+        const phone = String(req.body.phone || '').trim();
 
         if (!name || !email || !password) {
             return res.status(400).json({
@@ -127,4 +130,45 @@ exports.getProfile = (req, res) => {
     }
 
     return res.json(publicUser(user));
+};
+
+exports.updateProfile = (req, res) => {
+    const name = String(req.body.name || '').trim();
+    const phone = String(req.body.phone || '').trim();
+
+    if (!name) return res.status(400).json({ message: 'Name is required' });
+    if (phone && !/^\d{10}$/.test(phone)) {
+        return res.status(400).json({ message: 'Phone number must contain 10 digits' });
+    }
+
+    const user = User.findByIdAndUpdate(req.user.id, {
+        name,
+        phone,
+        dob: String(req.body.dob || ''),
+        gender: String(req.body.gender || ''),
+        address: String(req.body.address || '').trim()
+    });
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    return res.json(publicUser(user));
+};
+
+exports.changePassword = async (req, res) => {
+    try {
+        const currentPassword = String(req.body.currentPassword || '');
+        const newPassword = String(req.body.newPassword || '');
+        const user = User.findById(req.user.id);
+
+        if (!currentPassword || newPassword.length < 6) {
+            return res.status(400).json({ message: 'Valid current and new passwords are required' });
+        }
+        if (!user || !(await bcrypt.compare(currentPassword, user.password))) {
+            return res.status(400).json({ message: 'Current password is incorrect' });
+        }
+
+        User.findByIdAndUpdate(user._id, { password: await bcrypt.hash(newPassword, 10) });
+        return res.json({ message: 'Password changed successfully' });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
 };

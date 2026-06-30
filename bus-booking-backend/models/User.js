@@ -9,6 +9,9 @@ module.exports = {
             email: data.email.trim().toLowerCase(),
             password: data.password,
             phone: data.phone || '',
+            dob: data.dob || '',
+            gender: data.gender || '',
+            address: data.address || '',
             role: data.role || 'user',
             status: data.status || 'ACTIVE',
             createdAt: new Date()
@@ -34,6 +37,10 @@ module.exports = {
         return db.users.find(user => user._id === id);
     },
 
+    find() {
+        return [...db.users];
+    },
+
     findByIdAndUpdate(id, updates) {
         const index = db.users.findIndex(user => user._id === id);
 
@@ -48,5 +55,16 @@ module.exports = {
         };
 
         return db.users[index];
+    },
+
+    findByIdAndDelete(id) {
+        const index = db.users.findIndex(user => user._id === id);
+
+        if (index === -1) {
+            return null;
+        }
+
+        const [deletedUser] = db.users.splice(index, 1);
+        return deletedUser;
     }
 };

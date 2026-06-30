@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
@@ -15,7 +15,11 @@ export class LoginComponent {
   isLoading = false;
   errorMessage = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
@@ -36,6 +40,11 @@ export class LoginComponent {
     this.authService.login({ email, password }).subscribe({
       next: (user) => {
         this.isLoading = false;
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+        if (returnUrl) {
+          this.router.navigateByUrl(returnUrl);
+          return;
+        }
         if (user.role === 'ADMIN') {
           this.router.navigate(['/admin/dashboard']);
         }

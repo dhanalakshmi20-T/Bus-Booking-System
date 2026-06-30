@@ -1,109 +1,39 @@
 <div class="reports-page">
-    <div class="page-header">
-        <div>
-            <h3>Reports</h3>
-            <p>Revenue, booking and route performance summary.</p>
-        </div>
-    </div>
+  <div class="page-header"><div><h3>Reports</h3><p>Revenue, booking and route performance summary.</p></div></div>
+  <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <div class="text-center py-5" *ngIf="isLoading"><div class="spinner-border text-primary"></div></div>
 
+  <ng-container *ngIf="!isLoading">
     <div class="summary-grid">
-        <div class="summary-card">
-            <i class="bi bi-currency-rupee amber"></i>
-
-            <div>
-                <strong>₹{{ totalRevenue }}</strong>
-                <span>Total Revenue</span>
-            </div>
-        </div>
-
-        <div class="summary-card">
-            <i class="bi bi-ticket-perforated-fill purple"></i>
-
-            <div>
-                <strong>{{ totalBookings }}</strong>
-                <span>Total Bookings</span>
-            </div>
-        </div>
-
-        <div class="summary-card">
-            <i class="bi bi-graph-up-arrow green"></i>
-
-            <div>
-                <strong>₹{{ averageFare }}</strong>
-                <span>Average Fare</span>
-            </div>
-        </div>
-
-        <div class="summary-card">
-            <i class="bi bi-x-circle-fill red"></i>
-
-            <div>
-                <strong>{{ cancellationRate }}%</strong>
-                <span>Cancellation Rate</span>
-            </div>
-        </div>
+      <div class="summary-card"><i class="bi bi-currency-rupee amber"></i><div><strong>₹{{ totalRevenue }}</strong><span>Total Revenue</span></div></div>
+      <div class="summary-card"><i class="bi bi-ticket-perforated-fill purple"></i><div><strong>{{ totalBookings }}</strong><span>Total Bookings</span></div></div>
+      <div class="summary-card"><i class="bi bi-graph-up-arrow green"></i><div><strong>₹{{ averageFare }}</strong><span>Average Fare</span></div></div>
+      <div class="summary-card"><i class="bi bi-x-circle-fill red"></i><div><strong>{{ cancellationRate }}%</strong><span>Cancellation Rate</span></div></div>
     </div>
 
     <div class="row g-4">
-        <div class="col-lg-8">
-            <div class="report-card">
-                <div class="card-title-row">
-                    <h5>Route Revenue</h5>
-                    <span>{{ routeReports.length }} routes</span>
-                </div>
-
-                <div class="table-responsive" *ngIf="routeReports.length > 0">
-                    <table class="table align-middle mb-0">
-                        <thead>
-                            <tr>
-                                <th>Route</th>
-                                <th>Bookings</th>
-                                <th>Revenue</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr *ngFor="let report of routeReports">
-                                <td>{{ report.route }}</td>
-                                <td>{{ report.bookings }}</td>
-                                <td>₹{{ report.revenue }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="empty-state" *ngIf="routeReports.length === 0">
-                    <i class="bi bi-bar-chart"></i>
-                    <h6>No route data</h6>
-                    <p>Confirmed bookings are required to generate route reports.</p>
-                </div>
-            </div>
+      <div class="col-lg-8">
+        <div class="report-card">
+          <div class="card-title-row"><h5>Route Revenue</h5><span>{{ routeReports.length }} routes</span></div>
+          <div class="table-responsive" *ngIf="routeReports.length > 0">
+            <table class="table align-middle mb-0">
+              <thead><tr><th>Route</th><th>Bookings</th><th>Revenue</th></tr></thead>
+              <tbody><tr *ngFor="let report of routeReports"><td>{{ report.route }}</td><td>{{ report.bookings }}</td><td>₹{{ report.revenue }}</td></tr></tbody>
+            </table>
+          </div>
+          <div class="empty-state" *ngIf="routeReports.length === 0"><i class="bi bi-bar-chart"></i><h6>No route data</h6><p>Confirmed bookings are required to generate route reports.</p></div>
         </div>
+      </div>
 
-        <div class="col-lg-4">
-            <div class="report-card compact">
-                <h5>Highlights</h5>
-
-                <div class="highlight-row">
-                    <span>Confirmed</span>
-                    <strong>{{ confirmedBookings }}</strong>
-                </div>
-
-                <div class="highlight-row">
-                    <span>Cancelled</span>
-                    <strong>{{ cancelledBookings }}</strong>
-                </div>
-
-                <div class="highlight-row">
-                    <span>Users</span>
-                    <strong>{{ users.length }}</strong>
-                </div>
-
-                <div class="highlight-row">
-                    <span>Top Route</span>
-                    <strong>{{ topRoute }}</strong>
-                </div>
-            </div>
+      <div class="col-lg-4">
+        <div class="report-card compact">
+          <h5>Highlights</h5>
+          <div class="highlight-row"><span>Confirmed</span><strong>{{ confirmedBookings }}</strong></div>
+          <div class="highlight-row"><span>Cancelled</span><strong>{{ cancelledBookings }}</strong></div>
+          <div class="highlight-row"><span>Users</span><strong>{{ users.length }}</strong></div>
+          <div class="highlight-row"><span>Top Route</span><strong>{{ topRoute }}</strong></div>
         </div>
+      </div>
     </div>
+  </ng-container>
 </div>

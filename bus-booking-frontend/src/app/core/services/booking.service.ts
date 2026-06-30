@@ -44,6 +44,16 @@ export class BookingService {
     );
   }
 
+  confirmBooking(id: string): Observable<CancelBookingResponse> {
+    return this.http.put<CancelBookingResponse>(
+      `${this.apiUrl}/confirm/${id}`, {}
+    );
+  }
+
+  deleteBooking(id: string): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
+  }
+
   private normalizeBooking(booking: any): Booking {
     return {
       ...booking,

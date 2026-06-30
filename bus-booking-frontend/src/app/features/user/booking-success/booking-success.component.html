@@ -1,203 +1,247 @@
 <div class="success-page">
-    <div class="container py-5 text-center" *ngIf="notFound">
-        <i class="bi bi-exclamation-circle not-found-icon"></i>
-        <h4 class="mt-3">Booking Not Found</h4>
-        <p class="text-muted">We couldn't find your booking details.</p>
-        <button class="btn btn-lavender mt-2" (click)="goHome()">
-            <i class="bi bi-house-fill me-2"></i>
-            Go to Home
-        </button>
+
+  <div class="container py-5 text-center" *ngIf="isLoading">
+    <div class="spinner-border text-lavender" role="status"></div>
+    <p class="text-muted mt-3">Loading booking details...</p>
+  </div>
+
+  <div class="container py-5 text-center"
+       *ngIf="!isLoading && notFound">
+    <i class="bi bi-exclamation-circle not-found-icon"></i>
+    <h4 class="mt-3">Booking Not Found</h4>
+    <p class="text-muted">
+      {{ errorMessage || 'We could not find your booking details.' }}
+    </p>
+
+    <button class="btn btn-lavender mt-2" (click)="goHome()">
+      <i class="bi bi-house-fill me-2"></i>
+      Go to Home
+    </button>
+  </div>
+
+  <div *ngIf="!isLoading && booking">
+    <div class="success-banner">
+      <div class="container-fluid px-4 px-lg-5">
+        <div class="banner-content">
+          <div class="success-icon-wrap">
+            <div class="success-circle">
+              <i class="bi bi-check-lg"></i>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="banner-title">Booking Confirmed</h3>
+            <p class="banner-sub">
+              Your tickets are booked successfully. Have a safe journey!
+            </p>
+
+            <div class="booking-id-badge">
+              <i class="bi bi-ticket-perforated-fill"></i>
+              Booking ID: <strong>{{ ticketNumber }}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div *ngIf="booking && !notFound">
-        <div class="success-banner">
-            <div class="container-fluid px-4 px-lg-5">
-                <div class="banner-content">
-                    <div class="success-icon-wrap">
-                        <div class="success-circle">
-                            <i class="bi bi-check-lg"></i>
-                        </div>
-                    </div>
+    <div class="container-fluid px-4 px-lg-5 py-4">
+      <div class="row g-4 justify-content-center">
+        <div class="col-lg-8">
 
-                    <div>
-                        <h3 class="banner-title">Booking Confirmed</h3>
-                        <p class="banner-sub">Your tickets are booked successfully. Have a safe journey!</p>
-
-                        <div class="booking-id-badge">
-                            <i class="bi bi-ticket-perforated-fill"></i>
-                            Booking ID: <strong>{{ booking.bookingId }}</strong>
-                        </div>
-                    </div>
+          <div class="ticket-card" id="printable-ticket">
+            <div class="ticket-header">
+              <div>
+                <div class="ticket-bus-name">
+                  {{ busDetails?.busName }}
                 </div>
-            </div>
-        </div>
-
-        <div class="container-fluid px-4 px-lg-5 py-4">
-            <div class="row g-4 justify-content-center">
-                <div class="col-lg-8">
-                    <div class="ticket-card" id="printable-ticket">
-                        <div class="ticket-header">
-                            <div>
-                                <div class="ticket-bus-name">{{ booking.busName }}</div>
-                                <div class="ticket-bus-num">{{ booking.busNumber }}</div>
-                            </div>
-
-                            <span class="status-badge">
-                                <i class="bi bi-check-circle-fill me-1"></i>
-                                {{ booking.status }}
-                            </span>
-                        </div>
-
-                        <div class="ticket-route">
-                            <div class="route-point">
-                                <div class="route-time">{{ booking.departureTime }}</div>
-                                <div class="route-city">{{ booking.from }}</div>
-                            </div>
-
-                            <div class="route-line">
-                                <div class="route-dot"></div>
-                                <div class="route-track"></div>
-                                <i class="bi bi-bus-front-fill route-bus-icon"></i>
-                                <div class="route-track"></div>
-                                <div class="route-dot"></div>
-                            </div>
-
-                            <div class="route-point text-end">
-                                <div class="route-time">{{ booking.arrivalTime }}</div>
-                                <div class="route-city">{{ booking.to }}</div>
-                            </div>
-                        </div>
-
-                        <div class="journey-date">
-                            <i class="bi bi-calendar-event-fill"></i>
-                            {{ formattedDate }}
-                        </div>
-
-                        <div class="tear-line">
-                            <div class="tear-circle left"></div>
-                            <div class="tear-dashes"></div>
-                            <div class="tear-circle right"></div>
-                        </div>
-
-                        <div class="ticket-body">
-                            <div class="row g-3">
-                                <div class="col-sm-6">
-                                    <div class="ticket-info-block">
-                                        <div class="info-label">
-                                            <i class="bi bi-grid-fill"></i>
-                                            Seats
-                                        </div>
-
-                                        <div class="seat-chips">
-                                            <span class="seat-chip" *ngFor="let seat of booking.seats">
-                                                {{ seat }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-6">
-                                    <div class="ticket-info-block">
-                                        <div class="info-label">
-                                            <i class="bi bi-receipt"></i>
-                                            Total Fare
-                                        </div>
-
-                                        <div class="fare-amount">
-                                            ₹{{ booking.totalFare }}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-6">
-                                    <div class="ticket-info-block">
-                                        <div class="info-label">
-                                            <i class="bi bi-person-fill"></i>
-                                            Passenger
-                                        </div>
-
-                                        <div class="info-value">{{ booking.passengerName }}</div>
-                                        <div class="info-sub">
-                                            Age: {{ booking.passengerAge }} &nbsp; | &nbsp;
-                                            {{ booking.passengerGender | titlecase}}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-6">
-                                    <div class="ticket-info-block">
-                                        <div class="info-label">
-                                            <i class="bi bi-telephone-fill"></i>
-                                            Mobile
-                                        </div>
-
-                                        <div class="info-value">+91 {{ booking.mobileNumber }}</div>
-                                    </div>
-                                </div>
-
-                                <div class="col-12">
-                                    <div class="ticket-info-block booked-at-block">
-                                        <i class="bi bi-clock-fill"></i>
-                                        Booked on {{ bookedAtFormatted }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="action-buttons">
-                            <button class="btn btn-outline-lavender" (click)="printTicket()">
-                                <i class="bi bi-printer-fill me-2"></i>
-                                Print Ticket
-                            </button>
-
-                            <button class="btn btn-lavender" (click)="goToMyBookings()">
-                                <i class="bi bi-ticket-perforated-fill me-2"></i>
-                                My Bookings
-                            </button>
-
-                            <button class="btn btn-outline-lavender" (click)="goHome()">
-                                <i class="bi bi-house-fill me-2"></i>
-                                Home
-                            </button>
-                        </div>
-
-                        <div class="row g-3 mt-2">
-                            <div class="col-md-4">
-                                <div class="info-card green">
-                                    <i class="bi bi-shield-check-fill"></i>
-
-                                    <div>
-                                        <div class="ic-title">Safe Journey</div>
-                                        <div class="ic-text">Your booking is confirmed and secured.</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-4">
-                                <div class="info-card blue">
-                                    <i class="bi bi-clock-fill"></i>
-
-                                    <div>
-                                        <div class="ic-title">Be On Time</div>
-                                        <div class="ic-text">Arrive 15 minutes before departure.</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-4">
-                                <div class="info-card purple">
-                                    <i class="bi bi-headset"></i>
-
-                                    <div>
-                                        <div class="ic-title">Need Help?</div>
-                                        <div class="ic-text">Call support: 1800-XXX-XXXX</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="ticket-bus-num">
+                  {{ busDetails?.busNumber }}
+                  <span *ngIf="busDetails?.busType">
+                    | {{ busDetails?.busType }}
+                  </span>
                 </div>
+              </div>
+
+              <span class="status-badge">
+                <i class="bi bi-check-circle-fill me-1"></i>
+                {{ booking.status }}
+              </span>
             </div>
+
+            <div class="ticket-route">
+              <div class="route-point">
+                <div class="route-time">
+                  {{ busDetails?.departureTime }}
+                </div>
+                <div class="route-city">
+                  {{ busDetails?.from }}
+                </div>
+              </div>
+
+              <div class="route-line">
+                <div class="route-dot"></div>
+                <div class="route-track"></div>
+                <i class="bi bi-bus-front-fill route-bus-icon"></i>
+                <div class="route-track"></div>
+                <div class="route-dot"></div>
+              </div>
+
+              <div class="route-point text-end">
+                <div class="route-time">
+                  {{ busDetails?.arrivalTime }}
+                </div>
+                <div class="route-city">
+                  {{ busDetails?.to }}
+                </div>
+              </div>
+            </div>
+
+            <div class="journey-date">
+              <i class="bi bi-calendar-event-fill"></i>
+              {{ formattedDate }}
+            </div>
+
+            <div class="tear-line">
+              <div class="tear-circle left"></div>
+              <div class="tear-dashes"></div>
+              <div class="tear-circle right"></div>
+            </div>
+
+            <div class="ticket-body">
+              <div class="row g-3">
+
+                <div class="col-sm-6">
+                  <div class="ticket-info-block">
+                    <div class="info-label">
+                      <i class="bi bi-grid-fill"></i>
+                      Seats
+                    </div>
+
+                    <div class="seat-chips">
+                      <span class="seat-chip"
+                            *ngFor="let seat of seatNumbers">
+                        {{ seat }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-sm-6">
+                  <div class="ticket-info-block">
+                    <div class="info-label">
+                      <i class="bi bi-receipt"></i>
+                      Total Fare
+                    </div>
+
+                    <div class="fare-amount">
+                      ₹{{ booking.totalFare }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-sm-6">
+                  <div class="ticket-info-block">
+                    <div class="info-label">
+                      <i class="bi bi-person-fill"></i>
+                      Passenger
+                    </div>
+
+                    <div class="info-value">
+                      {{ primaryPassenger?.name }}
+                    </div>
+
+                    <div class="info-sub">
+                      Age: {{ primaryPassenger?.age }}
+                      &nbsp; | &nbsp;
+                      {{ primaryPassenger?.gender | titlecase }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-sm-6">
+                  <div class="ticket-info-block">
+                    <div class="info-label">
+                      <i class="bi bi-telephone-fill"></i>
+                      Mobile
+                    </div>
+
+                    <div class="info-value">
+                      {{ primaryPassenger?.mobileNumber || booking.userDetails?.phone || 'Not provided' }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <div class="ticket-info-block booked-at-block">
+                    <i class="bi bi-clock-fill"></i>
+                    Booked on {{ bookedAtFormatted }}
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="action-buttons">
+              <button class="btn btn-outline-lavender"
+                      (click)="printTicket()">
+                <i class="bi bi-printer-fill me-2"></i>
+                Print Ticket
+              </button>
+
+              <button class="btn btn-lavender"
+                      (click)="goToMyBookings()">
+                <i class="bi bi-ticket-perforated-fill me-2"></i>
+                My Bookings
+              </button>
+
+              <button class="btn btn-outline-lavender"
+                      (click)="goHome()">
+                <i class="bi bi-house-fill me-2"></i>
+                Home
+              </button>
+            </div>
+
+            <div class="row g-3 mt-2">
+              <div class="col-md-4">
+                <div class="info-card green">
+                  <i class="bi bi-shield-check-fill"></i>
+                  <div>
+                    <div class="ic-title">Safe Journey</div>
+                    <div class="ic-text">
+                      Your booking is confirmed and secured.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="info-card blue">
+                  <i class="bi bi-clock-fill"></i>
+                  <div>
+                    <div class="ic-title">Be On Time</div>
+                    <div class="ic-text">
+                      Arrive 15 minutes before departure.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="info-card purple">
+                  <i class="bi bi-headset"></i>
+                  <div>
+                    <div class="ic-title">Need Help?</div>
+                    <div class="ic-text">
+                      Call support: 1800-XXX-XXXX
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>

@@ -182,7 +182,7 @@ export class SeatSelectionComponent implements OnInit {
       return;
     }
 
-    if (this.selectedSeats.length >= 0) {
+    if (this.selectedSeats.length >= 6) {
       this.errorMessage = 'You can select a maximum of 6 seats.';
       return;
     }
@@ -230,7 +230,8 @@ export class SeatSelectionComponent implements OnInit {
         name: this.passengerName.trim(),
         age,
         gender: this.passengerGender,
-        seatNumber
+        seatNumber,
+        mobileNumber: this.mobileNumber.trim()
       }))
     }).subscribe({
       next: booking => {

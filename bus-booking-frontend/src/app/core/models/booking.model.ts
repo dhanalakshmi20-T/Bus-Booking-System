@@ -3,6 +3,7 @@ export interface Passenger {
     age: number;
     gender: string;
     seatNumber: string;
+    mobileNumber?: string;
 }
 
 export interface BusDetails {

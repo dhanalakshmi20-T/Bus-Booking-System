@@ -1,18 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-export interface AdminUser {
-  id: number;
-  name: string;
-  email: string;
-  role: 'USER' | 'ADMIN';
-  token?: string;
-  password?: string;
-  mobile?: string;
-  gender?: string;
-  dob?: string;
-  address?: string;
-  status?: 'ACTIVE' | 'BLOCKED';
-}
+import { UserSummary } from '../../../core/models/user.model';
+import { UserService } from '../../../core/services/user.service';
 
 @Component({
   selector: 'app-manage-users',
@@ -20,39 +9,34 @@ export interface AdminUser {
   styleUrls: ['./manage-users.component.scss']
 })
 export class ManageUsersComponent implements OnInit {
-  
-  users: AdminUser[] = [];
+  users: UserSummary[] = [];
   searchText = '';
   roleFilter = 'ALL';
+  isLoading = true;
+  processingId = '';
+  errorMessage = '';
+
+  constructor(private userService: UserService) {}
 
   ngOnInit(): void {
-    this.loadUsers();
+    this.userService.getAllUsers().subscribe({
+      next: users => {
+        this.users = users;
+        this.isLoading = false;
+      },
+      error: error => {
+        this.errorMessage = error.error?.message || 'Unable to load users.';
+        this.isLoading = false;
+      }
+    });
   }
 
-  private loadUsers(): void {
-    this.users = JSON.parse(localStorage.getItem('bb_users') || '[]')
-      .map((user: AdminUser) => ({
-        ...user,
-        role: user.role || 'USER',
-        status: user.status || 'ACTIVE'
-      }));
-  }
-
-  private saveUsers(): void {
-    localStorage.setItem('bb_users', JSON.stringify(this.users));
-  }
-
-  get filteredUsers(): AdminUser[] {
+  get filteredUsers(): UserSummary[] {
     const term = this.searchText.trim().toLowerCase();
-
     return this.users.filter(user => {
       const matchesRole = this.roleFilter === 'ALL' || user.role === this.roleFilter;
-      const matchesSearch = !term ||
-        user.name.toLowerCase().includes(term) ||
-        user.email.toLowerCase().includes(term) ||
-        (user.mobile || '').includes(term);
-
-      return matchesRole && matchesSearch;
+      const searchable = `${user.name} ${user.email} ${user.phone || ''}`.toLowerCase();
+      return matchesRole && (!term || searchable.includes(term));
     });
   }
 
@@ -68,18 +52,43 @@ export class ManageUsersComponent implements OnInit {
     return this.users.filter(user => user.role === 'ADMIN').length;
   }
 
-  toggleStatus(user: AdminUser): void {
-    user.status = user.status === 'ACTIVE' ? 'BLOCKED' : 'ACTIVE';
-    this.saveUsers();
+  toggleStatus(user: UserSummary): void {
+    const status = user.status === 'ACTIVE' ? 'BLOCKED' : 'ACTIVE';
+    this.updateUser(user, this.userService.updateStatus(user.id, status));
   }
 
-  makeAdmin(user: AdminUser): void {
-    user.role = user.role === 'ADMIN' ? 'USER' : 'ADMIN';
-    this.saveUsers();
+  makeAdmin(user: UserSummary): void {
+    const role = user.role === 'ADMIN' ? 'USER' : 'ADMIN';
+    this.updateUser(user, this.userService.updateRole(user.id, role));
   }
 
-  deleteUser(id: number) {
-    this.users = this.users.filter(user => user.id !== id);
-    this.saveUsers();
+  private updateUser(user: UserSummary, request: ReturnType<UserService['updateStatus']>): void {
+    this.processingId = user.id;
+    this.errorMessage = '';
+    request.subscribe({
+      next: updated => {
+        this.users = this.users.map(item => item.id === user.id ? updated : item);
+        this.processingId = '';
+      },
+      error: error => {
+        this.errorMessage = error.error?.message || 'Unable to update user.';
+        this.processingId = '';
+      }
+    });
+  }
+
+  deleteUser(user: UserSummary): void {
+    if (!window.confirm(`Delete ${user.name}?`)) return;
+    this.processingId = user.id;
+    this.userService.deleteUser(user.id).subscribe({
+      next: () => {
+        this.users = this.users.filter(item => item.id !== user.id);
+        this.processingId = '';
+      },
+      error: error => {
+        this.errorMessage = error.error?.message || 'Unable to delete user.';
+        this.processingId = '';
+      }
+    });
   }
 }

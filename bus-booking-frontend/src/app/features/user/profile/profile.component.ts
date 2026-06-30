@@ -1,14 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-export interface UserProfile {
-  name: string;
-  email: string;
-  mobile: string;
-  dob: string;
-  gender: string;
-  address: string;
-}
+import { UserProfile } from '../../../core/models/user.model';
+import { AuthService } from '../../../core/services/auth.service';
+import { BookingService } from '../../../core/services/booking.service';
 
 @Component({
   selector: 'app-profile',
@@ -16,13 +11,11 @@ export interface UserProfile {
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
-
   profile: UserProfile = {
     name: '', email: '', mobile: '', dob: '', gender: 'male', address: ''
   };
-
   editMode = false;
-  saving  = false;
+  saving = false;
   saveSuccess = false;
   errorMessage = '';
   totalBookings = 0;
@@ -30,7 +23,11 @@ export class ProfileComponent implements OnInit {
   cancelledBookings = 0;
   totalSpent = 0;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private bookingService: BookingService
+  ) {}
 
   ngOnInit(): void {
     this.loadProfile();
@@ -38,27 +35,32 @@ export class ProfileComponent implements OnInit {
   }
 
   private loadProfile(): void {
-    const current = localStorage.getItem('bb_current');
-    if (current) {
-      const user = JSON.parse(current);
-      this.profile = {
-        name: user.name || '',
-        email: user.email || '',
-        mobile: user.mobile || '',
-        dob: user.dob || '',
-        gender: user.gender || '',
-        address: user.address || ''
-      };
-    }
+    const user = this.authService.currentUser;
+    if (!user) return;
+    this.profile = {
+      name: user.name || '',
+      email: user.email || '',
+      mobile: user.mobile || user.phone || '',
+      dob: user.dob || '',
+      gender: user.gender || 'male',
+      address: user.address || ''
+    };
   }
 
   private loadStats(): void {
-    const raw = localStorage.getItem('bb_bookings');
-    const bookings = raw ? JSON.parse(raw) : [];
-    this.totalBookings = bookings.length;
-    this.confirmedBookings = bookings.filter((b: any) => b.status === 'CONFIRMED').length;
-    this.cancelledBookings = bookings.filter((b: any) => b.status === 'CANCELLED').length;
-    this.totalSpent = bookings.filter((b: any) => b.status === 'CONFIRMED').reduce((sum: number, b: any) => sum + b.totalFare, 0)
+    this.bookingService.getMyBookings().subscribe({
+      next: bookings => {
+        this.totalBookings = bookings.length;
+        this.confirmedBookings = bookings.filter(item => item.status === 'CONFIRMED').length;
+        this.cancelledBookings = bookings.filter(item => item.status === 'CANCELLED').length;
+        this.totalSpent = bookings
+          .filter(item => item.status === 'CONFIRMED')
+          .reduce((sum, item) => sum + item.totalFare, 0);
+      },
+      error: () => {
+        this.errorMessage = 'Unable to load booking statistics.';
+      }
+    });
   }
 
   toggleEdit(): void {
@@ -69,34 +71,29 @@ export class ProfileComponent implements OnInit {
 
   saveProfile(): void {
     this.errorMessage = '';
-
     if (!this.profile.name.trim()) {
       this.errorMessage = 'Name is required.';
       return;
     }
-    if (this.profile.mobile && this.profile.mobile.length !== 10) {
+    if (this.profile.mobile && !/^\d{10}$/.test(this.profile.mobile)) {
       this.errorMessage = 'Enter a valid 10-digit mobile number.';
       return;
     }
 
     this.saving = true;
-    setTimeout(() => {
-      const current = JSON.parse(localStorage.getItem('bb_current') || '{}');
-      const updated = { ...current, ...this.profile };
-      localStorage.setItem('bb_current', JSON.stringify(updated));
-
-      const users: any[] = JSON.parse(localStorage.getItem('bb_users') || '[]');
-      const idx = users.findIndex(u => u.email === this.profile.email);
-      if (idx !== -1) {
-        users[idx] = { ...users[idx], ...this.profile };
-        localStorage.setItem('bb_users', JSON.stringify(users));
+    this.authService.updateProfile(this.profile).subscribe({
+      next: () => {
+        this.saving = false;
+        this.editMode = false;
+        this.saveSuccess = true;
+        this.loadProfile();
+        setTimeout(() => this.saveSuccess = false, 3000);
+      },
+      error: error => {
+        this.saving = false;
+        this.errorMessage = error.error?.message || 'Unable to save profile.';
       }
-
-      this.saving = false;
-      this.editMode = false;
-      this.saveSuccess = true;
-      setTimeout(() => this.saveSuccess = false, 3000);
-    }, 800);
+    });
   }
 
   cancelEdit(): void {
@@ -110,17 +107,14 @@ export class ProfileComponent implements OnInit {
   }
 
   get avatarInitials(): string {
-    const words = this.profile.name.trim().split(' ');
-    if (words.length >= 2) {
-      return (words[0][0] + words[words.length - 1][0]).toUpperCase();
-    }
+    const words = this.profile.name.trim().split(/\s+/).filter(Boolean);
+    if (words.length >= 2) return (words[0][0] + words[words.length - 1][0]).toUpperCase();
     return this.profile.name.slice(0, 2).toUpperCase() || 'U';
   }
 
   get formattedDob(): string {
     if (!this.profile.dob) return '-';
-    const d = new Date(this.profile.dob);
-    return d.toLocaleDateString('en-IN', {
+    return new Date(this.profile.dob).toLocaleDateString('en-IN', {
       day: 'numeric', month: 'long', year: 'numeric'
     });
   }
@@ -130,8 +124,8 @@ export class ProfileComponent implements OnInit {
     const today = new Date();
     const birth = new Date(this.profile.dob);
     let age = today.getFullYear() - birth.getFullYear();
-    const m = today.getMonth() - birth.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+    const month = today.getMonth() - birth.getMonth();
+    if (month < 0 || (month === 0 && today.getDate() < birth.getDate())) age--;
     return age;
   }
 }

@@ -60,7 +60,8 @@ exports.createBooking = (req, res) => {
             name: String(passenger.name || '').trim(),
             age: Number(passenger.age),
             gender: String(passenger.gender || '').trim(),
-            seatNumber: String(passenger.seatNumber || '').trim()
+            seatNumber: String(passenger.seatNumber || '').trim(),
+            mobileNumber: String(passenger.mobileNumber || '').trim()
         }));
 
         const invalidPassenger = normalizedPassengers.some(passenger =>
@@ -86,7 +87,7 @@ exports.createBooking = (req, res) => {
         }
 
         const unavailableSeats = requestedSeats.filter(seatNumber => {
-            const seat = bus.seat.find(item => item.seatNumber === seatNumber);
+            const seat = bus.seats.find(item => item.seatNumber === seatNumber);
 
             return !seat || seat.isBooked;
         });
@@ -249,5 +250,86 @@ exports.getBookingById = (req, res) => {
         return res.status(500).json({
             message: error.message
         });
+    }
+};
+
+exports.confirmBooking = (req, res) => {
+    try {
+        const booking = Booking.findById(req.params.id);
+
+        if (!booking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        if (booking.status === 'CONFIRMED') {
+            return res.json({
+                message: 'Booking is already confirmed',
+                booking: addBookingDetails(booking)
+            });
+        }
+
+        const bus = Bus.findById(booking.bus);
+
+        if (!bus) {
+            return res.status(404).json({ message: 'Bus not found' });
+        }
+
+        const seatNumbers = booking.passengers.map(passenger => passenger.seatNumber);
+        const unavailable = bus.seats.filter(
+            seat => seatNumbers.includes(seat.seatNumber) && seat.isBooked
+        );
+
+        if (unavailable.length > 0) {
+            return res.status(409).json({
+                message: `Seats unavailable: ${unavailable.map(seat => seat.seatNumber).join(', ')}`
+            });
+        }
+
+        bus.seats.forEach(seat => {
+            if (seatNumbers.includes(seat.seatNumber)) {
+                seat.isBooked = true;
+            }
+        });
+        bus.availableSeats = bus.seats.filter(seat => !seat.isBooked).length;
+
+        const updated = Booking.findByIdAndUpdate(req.params.id, {
+            status: 'CONFIRMED',
+            confirmedAt: new Date().toISOString()
+        });
+
+        return res.json({
+            message: 'Booking confirmed successfully',
+            booking: addBookingDetails(updated)
+        });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+exports.deleteBooking = (req, res) => {
+    try {
+        const booking = Booking.findById(req.params.id);
+
+        if (!booking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        if (booking.status === 'CONFIRMED') {
+            const bus = Bus.findById(booking.bus);
+            if (bus) {
+                const seatNumbers = booking.passengers.map(passenger => passenger.seatNumber);
+                bus.seats.forEach(seat => {
+                    if (seatNumbers.includes(seat.seatNumber)) {
+                        seat.isBooked = false;
+                    }
+                });
+                bus.availableSeats = bus.seats.filter(seat => !seat.isBooked).length;
+            }
+        }
+
+        Booking.findByIdAndDelete(req.params.id);
+        return res.json({ message: 'Booking deleted successfully' });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
     }
 };

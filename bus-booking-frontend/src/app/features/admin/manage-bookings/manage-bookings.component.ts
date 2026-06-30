@@ -1,23 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-export interface AdminBooking {
-  bookingId: string;
-  busName: string;
-  busNumber: string;
-  from: string;
-  to: string;
-  date: string;
-  departureTime: string;
-  arrivalTime: string;
-  seats: string[];
-  totalFare: number;
-  passengerName: string;
-  passengerAge: string;
-  passengerGender: string;
-  mobileNumber: string;
-  status: 'CONFIRMED' | 'CANCELLED' | 'PENDING';
-  bookedAt: string;
-}
+import { Booking } from '../../../core/models/booking.model';
+import { BookingService } from '../../../core/services/booking.service';
 
 @Component({
   selector: 'app-manage-bookings',
@@ -25,76 +9,115 @@ export interface AdminBooking {
   styleUrls: ['./manage-bookings.component.scss']
 })
 export class ManageBookingsComponent implements OnInit {
-
-  bookings: AdminBooking[] = [];
+  bookings: Booking[] = [];
   searchText = '';
   statusFilter = 'ALL';
+  isLoading = true;
+  processingId = '';
+  errorMessage = '';
+
+  constructor(private bookingService: BookingService) {}
 
   ngOnInit(): void {
     this.loadBookings();
   }
 
   private loadBookings(): void {
-    this.bookings = JSON.parse(localStorage.getItem('bb_bookings') || '[]');
-    this.bookings.sort((a, b) => new Date(b.bookedAt).getTime() - new Date(a.bookedAt).getTime());
+    this.isLoading = true;
+    this.bookingService.getAllBookings().subscribe({
+      next: bookings => {
+        this.bookings = bookings;
+        this.isLoading = false;
+      },
+      error: error => {
+        this.errorMessage = error.error?.message || 'Unable to load bookings.';
+        this.isLoading = false;
+      }
+    });
   }
 
-  private saveBookings(): void {
-    localStorage.setItem('bb_bookings', JSON.stringify(this.bookings));
-  }
-
-  get filteredBookings(): AdminBooking[] {
+  get filteredBookings(): Booking[] {
     const term = this.searchText.trim().toLowerCase();
-
     return this.bookings.filter(booking => {
+      const bus = booking.busDetails;
+      const passenger = booking.passengers[0];
       const matchesStatus = this.statusFilter === 'ALL' || booking.status === this.statusFilter;
-      const matchesSearch = !term ||
-        booking.bookingId.toLowerCase().includes(term) ||
-        booking.passengerName.toLowerCase().includes(term) ||
-        booking.busName.toLowerCase().includes(term) ||
-        booking.from.toLowerCase().includes(term) ||
-        booking.to.toLowerCase().includes(term);
-
-      return matchesStatus && matchesSearch;
+      const searchable = [
+        booking.bookingId || booking.id,
+        passenger?.name,
+        booking.userDetails?.email,
+        bus?.busName,
+        bus?.from,
+        bus?.to
+      ].join(' ').toLowerCase();
+      return matchesStatus && (!term || searchable.includes(term));
     });
   }
 
   get confirmedCount(): number {
-    return this.bookings.filter(b => b.status === 'CONFIRMED').length;
+    return this.bookings.filter(booking => booking.status === 'CONFIRMED').length;
   }
 
   get cancelledCount(): number {
-    return this.bookings.filter(b => b.status === 'CANCELLED').length;
+    return this.bookings.filter(booking => booking.status === 'CANCELLED').length;
   }
 
   get totalRevenue(): number {
     return this.bookings
-      .filter(b => b.status === 'CONFIRMED')
-      .reduce((sum, b) => sum + Number(b.totalFare || 0), 0);
+      .filter(booking => booking.status === 'CONFIRMED')
+      .reduce((sum, booking) => sum + booking.totalFare, 0);
   }
 
-  cancelBooking(booking: AdminBooking): void {
-    booking.status = 'CANCELLED';
-    this.saveBookings();
+  cancelBooking(booking: Booking): void {
+    this.runAction(booking, 'CANCELLED');
   }
 
-  confirmBooking(booking: AdminBooking): void {
-    booking.status = 'CONFIRMED';
-    this.saveBookings();
+  confirmBooking(booking: Booking): void {
+    this.runAction(booking, 'CONFIRMED');
   }
 
-  deleteBooking(bookingId: string): void {
-    this.bookings = this.bookings.filter(b => b.bookingId !== bookingId);
-    this.saveBookings();
+  private runAction(booking: Booking, status: 'CONFIRMED' | 'CANCELLED'): void {
+    this.processingId = booking.id;
+    this.errorMessage = '';
+    const request = status === 'CONFIRMED'
+      ? this.bookingService.confirmBooking(booking.id)
+      : this.bookingService.cancelBooking(booking.id);
+
+    request.subscribe({
+      next: response => {
+        this.bookings = this.bookings.map(item =>
+          item.id === booking.id
+            ? { ...item, ...response.booking, status }
+            : item
+        );
+        this.processingId = '';
+      },
+      error: error => {
+        this.errorMessage = error.error?.message || 'Unable to update booking.';
+        this.processingId = '';
+      }
+    });
   }
 
-  formatDate(date: string): string {
+  deleteBooking(booking: Booking): void {
+    if (!window.confirm('Delete this booking permanently?')) return;
+    this.processingId = booking.id;
+    this.bookingService.deleteBooking(booking.id).subscribe({
+      next: () => {
+        this.bookings = this.bookings.filter(item => item.id !== booking.id);
+        this.processingId = '';
+      },
+      error: error => {
+        this.errorMessage = error.error?.message || 'Unable to delete booking.';
+        this.processingId = '';
+      }
+    });
+  }
+
+  formatDate(date?: string): string {
     if (!date) return '-';
-
     return new Date(date).toLocaleDateString('en-IN', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
+      day: '2-digit', month: 'short', year: 'numeric'
     });
   }
 }

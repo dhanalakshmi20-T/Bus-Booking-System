@@ -113,9 +113,10 @@
                         <input type="password" class="form-control" [(ngModel)]="password.confirmPassword">
                     </div>
 
-                    <button class="btn btn-lavender w-100" (click)="changePassword()">
-                        <i class="bi bi-key-fill me-2"></i>
-                        Update Password
+                    <button class="btn btn-lavender w-100" [disabled]="isChangingPassword" (click)="changePassword()">
+                        <span class="spinner-border spinner-border-sm me-2" *ngIf="isChangingPassword"></span>
+                        <i class="bi bi-key-fill me-2" *ngIf="!isChangingPassword"></i>
+                        {{ isChangingPassword ? 'Updating...' : 'Update Password' }}
                     </button>
                 </div>
             </div>

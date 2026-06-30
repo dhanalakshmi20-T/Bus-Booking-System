@@ -1,24 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-export interface Booking {
-  bookingId: string;
-  busName: string;
-  busNumber: string;
-  from: string;
-  to: string;
-  date: string;
-  departureTime: string;
-  arrivalTime: string;
-  seats: string[];
-  totalFare: number;
-  passengerName: string;
-  passengerAge: string;
-  passengerGender: string;
-  mobileNumber: string;
-  status: string;
-  bookedAt: string;
-}
+import { Booking } from '../../../core/models/booking.model';
+import { BookingService } from '../../../core/services/booking.service';
+
+type BookingFilter =
+  'ALL' |
+  'CONFIRMED' |
+  'CANCELLED';
 
 @Component({
   selector: 'app-my-bookings',
@@ -29,50 +18,106 @@ export class MyBookingsComponent implements OnInit {
 
   allBookings: Booking[] = [];
   filteredBookings: Booking[] = [];
-  activeFilter = 'ALL';
+
+  filters: BookingFilter[] = [
+    'ALL',
+    'CONFIRMED',
+    'CANCELLED'
+  ];
+
+  activeFilter: BookingFilter = 'ALL';
   cancellingId = '';
 
-  filters = ['ALL', 'CONFIRMED', 'CANCELLED'];
+  isLoading = true;
+  errorMessage = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private bookingService: BookingService
+  ) {}
 
   ngOnInit(): void {
     this.loadBookings();
   }
 
   private loadBookings(): void {
-    const raw = localStorage.getItem('bb_bookings');
-    this.allBookings = raw ? JSON.parse(raw) : [];
-    this.allBookings.sort((a, b) => new Date(b.bookedAt).getTime() - new Date(a.bookedAt).getTime());
-    this.applyFilter();
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.bookingService.getMyBookings().subscribe({
+      next: bookings => {
+        this.allBookings = bookings;
+        this.applyFilter();
+        this.isLoading = false;
+      },
+      error: error => {
+        this.allBookings = [];
+        this.filteredBookings = [];
+        this.isLoading = false;
+        this.errorMessage =
+          error.error?.message ||
+          'Unable to load your bookings.';
+      }
+    });
   }
 
   applyFilter(): void {
     if (this.activeFilter === 'ALL') {
       this.filteredBookings = [...this.allBookings];
+      return;
     }
-    else {
-      this.filteredBookings = this.allBookings.filter(b => b.status === this.activeFilter);
-    }
+
+    this.filteredBookings = this.allBookings.filter(
+      booking => booking.status === this.activeFilter
+    );
   }
 
-  setFilter(filter: string): void {
+  setFilter(filter: BookingFilter): void {
     this.activeFilter = filter;
     this.applyFilter();
   }
 
-  cancelBooking(bookingId: string): void {
-    this.cancellingId = bookingId;
-    setTimeout(() => {
-      this.allBookings = this.allBookings.map(b => b.bookingId === bookingId ? { ...b, status: 'CANCELLED' } : b);
-      localStorage.setItem('bb_bookings', JSON.stringify(this.allBookings));
-      this.cancellingId = '';
-    }, 800);
+  cancelBooking(booking: Booking): void {
+    if (booking.status === 'CANCELLED') {
+      return;
+    }
+
+    this.cancellingId = booking.id;
+    this.errorMessage = '';
+
+    this.bookingService
+      .cancelBooking(booking.id)
+      .subscribe({
+        next: response => {
+          const updatedBooking = response.booking;
+
+          this.allBookings = this.allBookings.map(item =>
+            item.id === booking.id
+              ? {
+                  ...item,
+                  ...updatedBooking,
+                  status: 'CANCELLED'
+                }
+              : item
+          );
+
+          this.cancellingId = '';
+          this.applyFilter();
+        },
+        error: error => {
+          this.cancellingId = '';
+          this.errorMessage =
+            error.error?.message ||
+            'Unable to cancel this booking.';
+        }
+      });
   }
 
-  viewTicket(bookingId: string): void {
+  viewTicket(booking: Booking): void {
     this.router.navigate(['/booking-success'], {
-      queryParams: { bookingId }
+      queryParams: {
+        bookingId: booking.bookingId || booking.id
+      }
     });
   }
 
@@ -80,35 +125,68 @@ export class MyBookingsComponent implements OnInit {
     this.router.navigate(['/search-buses']);
   }
 
-  formatDate(dateStr: string): string {
-    if (!dateStr) return '';
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('en-IN', {
-      day: 'numeric', month: 'short', year: 'numeric'
+  getSeatNumbers(booking: Booking): string[] {
+    return booking.passengers.map(
+      passenger => passenger.seatNumber
+    );
+  }
+
+  getPassengerName(booking: Booking): string {
+    return booking.passengers[0]?.name || '-';
+  }
+
+  formatDate(date: string | undefined): string {
+    if (!date) {
+      return '-';
+    }
+
+    return new Date(date).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
     });
   }
 
-  formatBookedAt(dateStr: string): string {
-    if (!dateStr) return '';
-    const d = new Date(dateStr);
-    return d.toLocaleString('en-IN', {
-      day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+  formatBookedAt(date: string): string {
+    if (!date) {
+      return '-';
+    }
+
+    return new Date(date).toLocaleString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   }
 
   get confirmedCount(): number {
-    return this.allBookings.filter(b => b.status === 'CONFIRMED').length;
+    return this.allBookings.filter(
+      booking => booking.status === 'CONFIRMED'
+    ).length;
   }
 
   get cancelledCount(): number {
-    return this.allBookings.filter(b => b.status === 'CANCELLED').length;
+    return this.allBookings.filter(
+      booking => booking.status === 'CANCELLED'
+    ).length;
   }
 
   get totalSpent(): number {
-    return this.allBookings.filter(b => b.status === 'CONFIRMED').reduce((sum, b) => sum + b.totalFare, 0);
+    return this.allBookings
+      .filter(booking => booking.status === 'CONFIRMED')
+      .reduce(
+        (total, booking) => total + booking.totalFare,
+        0
+      );
   }
 
-  isUpcoming(dateStr: string): boolean {
-    return new Date(dateStr) >= new Date;
+  isUpcoming(date: string | undefined): boolean {
+    if (!date) {
+      return false;
+    }
+
+    return new Date(date).getTime() >= Date.now();
   }
 }
