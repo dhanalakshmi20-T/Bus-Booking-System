@@ -1,9 +1,11 @@
-$lavender: #7c4dff;
-$lavender-dark: #4527a0;
-$lavender-light: #ede7f6;
-$lavender-pale: #f5f0ff;
-$text-dark: #2d1b69;
-$text-muted: #6d5f7e;
+$lavender: #2563EB;
+$lavender-dark: #1D4ED8;
+$lavender-light: #EFF6FF;
+$lavender-pale: #F8FAFC;
+$border-gray: #E5E7EB;
+$accent-orange-dark: #F97316;
+$text-dark: #1F2937;
+$text-muted: #475569;
 
 .register-page {
     min-height: 100vh;
@@ -15,7 +17,7 @@ $text-muted: #6d5f7e;
 }
 
 .left-panel {
-    background: linear-gradient(145deg, #4527a0 0%, #7c4dff 50%, #9c6fff 100%);
+    background: linear-gradient(145deg, $lavender-light 0%, $lavender-pale 50%, #EEF2FF 100%);
     padding: 3rem;
     display: flex;
     align-items: center;
@@ -48,7 +50,7 @@ $text-muted: #6d5f7e;
     .left-content {
         position: relative;
         z-index: 1;
-        color: #fff;
+        color: $text-dark;
         max-width: 420px;
     }
 }
@@ -67,7 +69,7 @@ $text-muted: #6d5f7e;
     .brand-name {
         font-size: 1.8rem;
         font-weight: 800;
-        color: #fff;
+        color: $text-dark;
         letter-spacing: 1px;
     }
 }
@@ -75,14 +77,14 @@ $text-muted: #6d5f7e;
 .left-title {
     font-size: 1.9rem;
     font-weight: 800;
-    color: #fff;
+    color: $text-dark;
     line-height: 1.3;
     margin-bottom: 1rem;
 }
 
 .left-subtitle {
     font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: $text-muted;
     line-height: 1.7;
     margin-bottom: 2rem;
 }
@@ -134,13 +136,13 @@ $text-muted: #6d5f7e;
         .stat-value {
             font-size: 1.6rem;
             font-weight: 800;
-            color: #fff;
+            color: $text-dark;
             line-height: 1;
         }
 
         .stat-label {
             font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.7);
+            color: $text-muted;
             margin-top: 4px;
         }
     }
@@ -200,20 +202,18 @@ $text-muted: #6d5f7e;
 
 .input-group-text {
     background: $lavender-pale;
-    border-color: #d1c4e9;
-    color: $lavender;
-}
-
-.form-control {
-    border-color: #d1c4e9;
-    font-size: 0.92rem;
-    padding: 10px 14px;
-
-    &:focus {
-        border-color: $lavender;
-        box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.12);
+        border-color: $border-gray;
+        color: $lavender;
     }
-    
+
+    .form-control {
+        border-color: $border-gray;
+        font-size: 0.92rem;
+        padding: 10px 14px;
+
+        &:focus {
+            border-color: $lavender;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
     &::placeholder {
         color: #b0a8c0;
         font-size: 0.88rem;
@@ -239,7 +239,7 @@ $text-muted: #6d5f7e;
 .toggle-eye {
     cursor: pointer;
     background: $lavender-pale;
-    border-color: #d1c4e9;
+    border-color: $border-gray;
     color: $lavender;
     &:hover {
         background: $lavender-light;
@@ -318,9 +318,9 @@ $text-muted: #6d5f7e;
     gap: 8px;
     
     &:hover:not(:disabled) {
-        background: $lavender-dark;
+        background: $accent-orange-dark;
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(124, 77, 255, 0.35);
+        box-shadow: 0 6px 20px rgba(249, 115, 22, 0.3);
         color: #fff;
     }
 
@@ -351,28 +351,17 @@ $text-muted: #6d5f7e;
         left: 0;
         right: 0;
         height: 1px;
-        background: #e1d5f5;
+            background: $border-gray;
+        }
+
+        span {
+            position: relative;
+            background: #fff;
+            padding: 0 12px;
+            color: $text-muted;
+            font-size: 0.85rem;
+        }
     }
-
-    span {
-        position: relative;
-        background: #fff;
-        padding: 0 12px;
-        color: $text-muted;
-        font-size: 0.85rem;
-    }
-}
-
-.login-text {
-    font-size: 0.92rem;
-    color: $text-muted;
-    margin: 0;
-}
-
-.login-link {
-    color: $lavender;
-    font-weight: 700;
-    text-decoration: none;
 
     &:hover {
         text-decoration: underline;
