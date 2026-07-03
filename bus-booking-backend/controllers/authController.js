@@ -54,7 +54,8 @@ exports.register = async (req, res) => {
             });
         }
 
-        if (User.findOne({ email })) {
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
             return res.status(409).json({
                 message: 'Email is already registered'
             });
@@ -62,7 +63,7 @@ exports.register = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = User.create({
+        const user = await User.create({
             name,
             email,
             password: hashedPassword,
@@ -94,7 +95,7 @@ exports.login = async (req, res) => {
             });
         }
 
-        const user = User.findOne({ email });
+        const user = await User.findOne({ email });
 
         if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(401).json({

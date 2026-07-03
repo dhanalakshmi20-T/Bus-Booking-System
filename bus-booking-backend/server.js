@@ -10,13 +10,11 @@ const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:4200';
 
 app.disable('x-powered-by');
 
-app.use(cors({
-    origin: CLIENT_URL,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(cors());
+app.options('*', cors());
 
 app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/api/health', (req, res) => {
     res.json({

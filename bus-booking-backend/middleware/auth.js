@@ -2,6 +2,10 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 const auth = (req, res, next) => {
+    if (req.method === 'OPTIONS') {
+        return next();
+    }
+
     const authorization = req.get('Authorization');
 
     if (!authorization || !authorization.startsWith('Bearer ')) {
