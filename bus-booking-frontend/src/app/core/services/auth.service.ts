@@ -23,15 +23,24 @@ export class AuthService {
   }
 
   get token(): string | null {
-    return this.currentUser?.token || null;
+    return this.currentUser?.token || this.getStoredToken();
   }
 
   get isLoggedIn(): boolean {
-    return !!this.currentUser;
+    return !!this.token;
   }
 
   get isAdmin(): boolean {
     return this.currentUser?.role === 'ADMIN';
+  }
+
+  private getStoredToken(): string | null {
+    try {
+      const user = JSON.parse(localStorage.getItem(CURRENT_KEY) || 'null');
+      return user?.token || null;
+    } catch {
+      return null;
+    }
   }
 
   register(data: { name: string; email: string; password: string; phone?: string }): Observable<User> {
@@ -44,6 +53,14 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, data).pipe(
       map(response => this.createSession(response))
     );
+  }
+
+  getProfile(): Observable<User> {
+    return this.http.get<BackendUser>(`${this.apiUrl}/profile`).pipe(map(response => {
+      const user = this.toUser(response, this.token || '');
+      this.setSession(user);
+      return user;
+    }));
   }
 
   updateProfile(profile: UserProfile): Observable<User> {
