@@ -36,15 +36,33 @@ export class ProfileComponent implements OnInit {
 
   private loadProfile(): void {
     const user = this.authService.currentUser;
-    if (!user) return;
-    this.profile = {
-      name: user.name || '',
-      email: user.email || '',
-      mobile: user.mobile || user.phone || '',
-      dob: user.dob || '',
-      gender: user.gender || 'male',
-      address: user.address || ''
-    };
+    if (user) {
+      this.profile = {
+        name: user.name || '',
+        email: user.email || '',
+        mobile: user.mobile || user.phone || '',
+        dob: user.dob || '',
+        gender: user.gender || 'male',
+        address: user.address || ''
+      };
+      return;
+    }
+
+    this.authService.getProfile().subscribe({
+      next: user => {
+        this.profile = {
+          name: user.name || '',
+          email: user.email || '',
+          mobile: user.mobile || user.phone || '',
+          dob: user.dob || '',
+          gender: user.gender || 'male',
+          address: user.address || ''
+        };
+      },
+      error: error => {
+        this.errorMessage = error.error?.message || 'Unable to load profile.';
+      }
+    });
   }
 
   private loadStats(): void {

@@ -1,7 +1,7 @@
-$lavender: #7c4dff;
-$lavender-dark: #4527a0;
-$lavender-light: #ede7f6;
-$lavender-pale: #f5f0ff;
+$lavender: #2563EB;
+$lavender-dark: #1D4ED8;
+$lavender-light: #EFF6FF;
+$lavender-pale: #F8FAFC;
 
 .my-bookings-page {
     min-height: 100vh;
@@ -9,8 +9,8 @@ $lavender-pale: #f5f0ff;
 }
 
 .bookings-header {
-    background: linear-gradient(135deg, $lavender-dark, $lavender);
-    color: #fff;
+    background: linear-gradient(135deg, $lavender-light 0%, $lavender-pale 60%, #EEF2FF 100%);
+    color: #1F2937;
     padding: 2rem 0 1.5rem;
 
     .header-top {
@@ -41,7 +41,7 @@ $lavender-pale: #f5f0ff;
 .btn-new-booking {
     background: rgba(255, 255, 255, 0.2);
     border: 1.5px solid rgba(255, 255, 255, 0.5);
-    color: #fff;
+    color: $lavender-dark;
     border-radius: 8px;
     padding: 0.5rem 1.1rem;
     font-weight: 600;
@@ -51,7 +51,7 @@ $lavender-pale: #f5f0ff;
 
     &:hover {
         background: rgba(255, 255, 255, 0.35);
-        color: #fff;
+        color: $lavender-dark;
     }
 }
 
@@ -183,7 +183,7 @@ $lavender-pale: #f5f0ff;
     transition: box-shadow 0.2s, transform 0.2s;
 
     &:hover {
-        box-shadow: 0 4px 20px rgba(124, 77, 255, 0.12);
+        box-shadow: 0 4px 20px rgba(37, 99, 235, 0.12);
         transform: translateY(-2px);
     }
 
@@ -389,7 +389,7 @@ $lavender-pale: #f5f0ff;
 .seat-chip {
     background: $lavender-light;
     color: $lavender-dark;
-    border: 1px solid #d1c4e9;
+    border: 1px solid $lavender-pale;
     border-radius: 6px;
     padding: 0.15rem 0.5rem;
     font-size: 0.75rem;

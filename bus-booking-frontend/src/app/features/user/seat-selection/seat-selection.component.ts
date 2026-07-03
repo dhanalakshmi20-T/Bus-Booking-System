@@ -125,7 +125,7 @@ export class SeatSelectionComponent implements OnInit {
   get rows(): SeatLayout[][] {
     const rows: SeatLayout[][] = [];
 
-    for (let index = 0; index < this.seats.concat.length; index += 4) {
+    for (let index = 0; index < this.seats.length; index += 4) {
       rows.push(this.seats.slice(index, index + 4));
     }
 

@@ -1,7 +1,7 @@
-$lavender: #7c4dff;
-$lavender-dark: #4527a0;
-$lavender-light: #ede7f6;
-$lavender-pale: #f5f0ff;
+$lavender: #2563EB;
+$lavender-dark: #1D4ED8;
+$lavender-light: #EFF6FF;
+$lavender-pale: #F8FAFC;
 
 .success-page {
     background-color: #faf8ff;
@@ -10,7 +10,7 @@ $lavender-pale: #f5f0ff;
 
 .not-found-icon {
     font-size: 4rem;
-    color: #d1c4e9;
+    color: $lavender-pale;
 }
 
 .success-banner {
@@ -98,13 +98,13 @@ $lavender-pale: #f5f0ff;
 .ticket-card {
     background: #fff;
     border-radius: 16px;
-    box-shadow: 0 4px 24px rgba(124, 77, 255, 0.12);
+    box-shadow: 0 4px 24px rgba(37, 99, 235, 0.12);
     overflow: hidden;
-    border: 1px solid #e0d7f8;
+    border: 1px solid $lavender-pale;
 }
 
 .ticket-header {
-    background: linear-gradient(135deg, $lavender-dark, $lavender);
+    background: linear-gradient(135deg, $lavender-light 0%, $lavender-pale 60%, #EEF2FF 100%);
     padding: 20px 24px;
     display: flex;
     align-items: center;
@@ -115,12 +115,12 @@ $lavender-pale: #f5f0ff;
     .ticket-bus-name {
         font-size: 1.2rem;
         font-weight: 800;
-        color: #fff;
+        color: #1F2937;
     }
 
     .ticket-bus-num {
         font-size: 0.82rem;
-        color: rgba(255, 255, 255, 0.75);
+        color: #475569;
         margin-top: 2px;
     }
 }
@@ -175,7 +175,7 @@ $lavender-pale: #f5f0ff;
     .route-track {
         flex: 1;
         height: 2px;
-        background: #d1c4e9;
+        background: $lavender-pale;
     }
 
     .route-bus-icon {
@@ -209,8 +209,8 @@ $lavender-pale: #f5f0ff;
         width: 20px;
         height: 20px;
         border-radius: 50%;
-        background: #fad8ff;
-        border: 1px solid #e0d7f8;
+        background: $lavender-pale;
+        border: 1px solid $lavender-pale;
         flex-shrink: 0;
 
         &.left {
@@ -224,7 +224,7 @@ $lavender-pale: #f5f0ff;
 
     .tear-dashes {
         flex: 1;
-        border-top: 2px dashed #d1c4e9;
+        border-top: 2px dashed $lavender-pale;
     }
 }
 
@@ -236,7 +236,7 @@ $lavender-pale: #f5f0ff;
     padding: 12px;
     background: #faf8ff;
     border-radius: 10px;
-    border: 1px solid #f0eaff;
+    border: 1px solid $lavender-pale;
     height: 100%;
 
     .info-label {

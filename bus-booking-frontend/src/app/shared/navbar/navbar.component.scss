@@ -1,6 +1,6 @@
 .nav-lavender {
-    background-color: #ffffff;
-    border-bottom: 2px solid #d1c4e9;
+    background-color: #2563EB;
+    border-bottom: 2px solid #E5E7EB;
 }
 
 .navbar-brand {
@@ -8,23 +8,23 @@
 
     .brand-icon {
         font-size: 1.8rem;
-        color: #7c4dff;
+        color: #ffffff;
     }
 
     .brand-text {
         font-size: 1.3rem;
         font-weight: 700;
-        color: #4527a0;
+        color: #ffffff;
         letter-spacing: 0.5px;
     }
 }
 
 .custom-toggler {
-    border: 1.5px solid #b39ddb;
+    border: 1.5px solid #E5E7EB;
     border-radius: 8px;
     padding: 4px 8px;
-    color: #7c4dff;
-    background: #ede7f6;
+    color: #2563EB;
+    background: #ffffff;
 
     &:focus {
         box-shadow: none;
@@ -32,7 +32,7 @@
 }
 
 .nav-item-link {
-    color: #4a148c !important;
+    color: #ffffff !important;
     font-size: 0.92rem;
     font-weight: 500;
     padding: 7px 13px !important;
@@ -41,31 +41,31 @@
     
     i {
         font-size: 1rem;
-        color: #9575cd;
+        color: rgba(255, 255, 255, 0.8);
     }
 
     &:hover {
-        background-color: #ede7f6;
-        color: #7c4dff !important;
+        background-color: rgba(255, 255, 255, 0.15);
+        color: #ffffff !important;
 
         i {
-            color: #7c4dff;
+            color: #ffffff;
         }
     }
 
     &.active-link {
-        background-color: #ede7f6;
-        color: #7c4dff !important;
+        background-color: rgba(255, 255, 255, 0.18);
+        color: #ffffff !important;
         font-weight: 600;
 
         i {
-            color: #7c4dff;
+            color: #ffffff;
         }
     }
 }
 
 .btn-register {
-    background-color: #7c4dff;
+    background-color: #10B981;
     color: #ffffff !important;
     border-radius: 22px;
     font-size: 0.9rem;
@@ -79,7 +79,7 @@
     }
 
     &:hover {
-        background-color: #6200ea;
+        background-color: #0f9c6d;
         color: #fff !important;
     }
 }
@@ -91,36 +91,36 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #ede7f6;
-    color: #7c4dff;
+    background: #ffffff;
+    color: #2563EB;
 
     i {
         font-size: 1.1rem;
-        color: #7c4dff !important;
+        color: #2563EB !important;
     }
 }
 
 .user-name-text {
     font-size: 0.9rem;
     font-weight: 600;
-    color: #4a148c;
+    color: #1F2937;
 }
 
 .custom-dropdown {
     border-radius: 12px;
     min-width: 200px;
     padding: 6px;
-    background: #fff;
-    border: 1px solid #e1d5f5 !important;
-    box-shadow: 0 6px 24px rgba(124, 77, 255, 0.12) !important;
+    background: #ffffff;
+    border: 1px solid #E5E7EB !important;
+    box-shadow: 0 6px 24px rgba(37, 99, 235, 0.12) !important;
 
     .dropdown-header-info {
         border-radius: 8px;
-        background: #f5f0ff;
+        background: #F8FAFC;
     }
 
     .text-lavender {
-        color: #7c4dff;
+        color: #2563EB;
         font-size: 0.95rem;
     }
 
@@ -128,38 +128,38 @@
         border-radius: 8px;
         font-size: 0.9rem;
         padding: 9px 14px;
-        color: #4a148c;
+        color: #475569;
         transition: background 0.15s;
 
         &:hover {
-            background-color: #ede7f6;
+            background-color: #F8FAFC;
         }
     }
 
     .icon-lavender {
-        color: #7c4dff !important;
+        color: #2563EB !important;
         font-size: 1rem;
     }
 
     .dropdown-divider {
-        border-color: #e8d5f5;
+        border-color: #E5E7EB;
     }
 }
 
 @media (max-width: 768px) {
     .navbar-collapse {
-        background-color: #f5f0ff;
+        background-color: #ffffff;
         margin-top: 8px;
         padding: 1rem 1.2rem;
         border-radius: 12px;
-        border: 1px solid #d1c4e9;
+        border: 1px solid #E5E7EB;
 
         .nav-item-link {
             padding: 10px 14px !important;
             width: 100%;
 
             &:hover {
-                background: #ede7f6;
+                background: #F8FAFC;
             }
         }
 
@@ -176,7 +176,7 @@
         .custom-dropdown {
             background: #fff;
             margin-top: 4px;
-            border: 1px solid #d1c4e9 !important;
+            border: 1px solid #E5E7EB !important;
         }
     }
 }

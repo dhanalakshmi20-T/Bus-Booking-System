@@ -42,7 +42,7 @@ export class SearchBusesComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.from = params.from || '';
       this.to = params.to || '';
-      this.date = params.data || '';
+      this.date = params.date || '';
 
       if (this.from && this.to && this.date) {
         this.searchBuses();

@@ -168,4 +168,53 @@
       </div>
     </div>
   </div>
+
+  <div class="container-fluid px-4 px-lg-5 py-2">
+    <h5 class="section-title mb-3">
+      <i class="bi bi-bus-front-fill"></i>
+      Available Buses
+    </h5>
+
+    <div class="row g-3 mb-4">
+      <div class="col-md-6 col-lg-4" *ngFor="let bus of buses">
+        <div class="route-card">
+          <div class="route-top">
+            <div class="route-city">
+              <i class="bi bi-circle-fill from-dot"></i>
+              <span>{{ bus.from }}</span>
+            </div>
+
+            <i class="bi bi-arrow-right route-arrow-icon"></i>
+
+            <div class="route-city">
+              <i class="bi bi-geo-alt-fill to-dot"></i>
+              <span>{{ bus.to }}</span>
+            </div>
+          </div>
+
+          <div class="route-bottom">
+            <div>
+              <strong>{{ bus.busName }}</strong>
+              <div class="d-block small text-muted">{{ bus.busNumber }} • {{ bus.busType }}</div>
+            </div>
+
+            <div class="text-end">
+              <div class="route-duration">
+                <i class="bi bi-clock"></i>
+                {{ bus.departureTime }} - {{ bus.arrivalTime }}
+              </div>
+              <div class="route-fare">₹{{ bus.fare }}</div>
+              <div class="small text-muted">{{ bus.availableSeats }} seats left</div>
+              <div class="mt-2">
+                <button class="btn btn-book" [disabled]="bus.availableSeats === 0" (click)="selectBus(bus)">
+                  {{ bus.availableSeats === 0 ? 'Sold Out' : 'Select Seats' }}
+                  <i class="bi bi-arrow-right" *ngIf="bus.availableSeats > 0"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

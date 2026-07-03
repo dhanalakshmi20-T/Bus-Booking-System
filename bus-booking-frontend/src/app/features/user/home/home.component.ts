@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from 'src/app/core/models/user.model';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { BusService } from 'src/app/core/services/bus.service';
+import { Bus } from 'src/app/core/models/bus.model';
 
 @Component({
   selector: 'app-home',
@@ -12,6 +14,7 @@ export class HomeComponent implements OnInit {
   
   user: User | null = null;
   currentDate = new Date();
+  buses: Bus[] = [];
 
   quickLinks = [
     {
@@ -50,11 +53,23 @@ export class HomeComponent implements OnInit {
     { from: 'Hyderabad', to: 'Chennai', duration: '6 hrs', fare: '₹450' }
   ];
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private busService: BusService
+  ) {}
 
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => {
       this.user = user;
+    });
+    this.loadBuses();
+  }
+
+  private loadBuses(): void {
+    this.busService.getAllBuses().subscribe({
+      next: (buses) => this.buses = buses.slice(0, 6),
+      error: () => this.buses = []
     });
   }
 
@@ -78,5 +93,25 @@ export class HomeComponent implements OnInit {
 
   goTo(route: string): void {
     this.router.navigate([route]);
+  }
+
+  selectBus(bus: Bus): void {
+    const date = bus.date || (() => {
+      const journey = new Date();
+      journey.setDate(journey.getDate() + 1);
+      return [
+        journey.getFullYear(),
+        String(journey.getMonth() + 1).padStart(2, '0'),
+        String(journey.getDate()).padStart(2, '0')
+      ].join('-');
+    })();
+
+    this.router.navigate(['/seat-selection', bus.id], {
+      queryParams: {
+        date,
+        from: bus.from,
+        to: bus.to
+      }
+    });
   }
 }
